@@ -5,7 +5,7 @@ from typing import Any, Dict
 
 from pydantic import BaseModel
 
-from langchain.requests import TextRequestsWrapper
+from langchain.requests import TextRequestsWrapper, Requests
 from langchain.tools.base import BaseTool
 
 
@@ -17,7 +17,7 @@ def _parse_input(text: str) -> Dict[str, Any]:
 class BaseRequestsTool(BaseModel):
     """Base class for requests tools."""
 
-    requests_wrapper: TextRequestsWrapper
+    requests_wrapper: Requests
 
 
 class RequestsGetTool(BaseRequestsTool, BaseTool):
@@ -28,11 +28,19 @@ class RequestsGetTool(BaseRequestsTool, BaseTool):
 
     def _run(self, url: str) -> str:
         """Run the tool."""
-        return self.requests_wrapper.get(url)
+        response = self.requests_wrapper.get(url)
+        if response.headers['Content-Type'] == 'application/json':
+            return response.text
+        else:
+            return "未获取到相关有用信息"
 
     async def _arun(self, url: str) -> str:
         """Run the tool asynchronously."""
-        return await self.requests_wrapper.aget(url)
+        response = await self.requests_wrapper.aget(url)
+        if response.headers['Content-Type'] == 'application/json':
+            return await response.text()
+        else:
+            return "未获取到相关有用信息"
 
 
 class RequestsPostTool(BaseRequestsTool, BaseTool):
