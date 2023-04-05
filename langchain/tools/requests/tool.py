@@ -29,7 +29,7 @@ class RequestsGetTool(BaseRequestsTool, BaseTool):
     def _run(self, url: str) -> str:
         """Run the tool."""
         response = self.requests_wrapper.get(url)
-        if response.headers['Content-Type'] == 'application/json':
+        if 'application/json' in response.headers['Content-Type']:
             return response.text
         else:
             return "未获取到相关有用信息"
