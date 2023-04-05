@@ -37,7 +37,7 @@ class RequestsGetTool(BaseRequestsTool, BaseTool):
     async def _arun(self, url: str) -> str:
         """Run the tool asynchronously."""
         response = await self.requests_wrapper.aget(url)
-        if response.headers['Content-Type'] == 'application/json':
+        if 'application/json' in response.headers['Content-Type']:
             return await response.text()
         else:
             return "未获取到相关有用信息"
