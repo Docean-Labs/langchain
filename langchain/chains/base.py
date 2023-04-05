@@ -21,6 +21,9 @@ class Chain(BaseModel, ABC):
     """Base interface that all chains should implement."""
 
     memory: Optional[BaseMemory] = None
+    textbuffer: Dict = {}
+    textbuffer_index: int = 0
+
     callback_manager: BaseCallbackManager = Field(
         default_factory=get_callback_manager, exclude=True
     )
@@ -104,6 +107,7 @@ class Chain(BaseModel, ABC):
 
         """
         inputs = self.prep_inputs(inputs)
+
         self.callback_manager.on_chain_start(
             {"name": self.__class__.__name__},
             inputs,
@@ -111,10 +115,13 @@ class Chain(BaseModel, ABC):
         )
         try:
             outputs = self._call(inputs)
+            self.store_textbuffer(inputs,outputs)
+
         except (KeyboardInterrupt, Exception) as e:
             self.callback_manager.on_chain_error(e, verbose=self.verbose)
             raise e
         self.callback_manager.on_chain_end(outputs, verbose=self.verbose)
+
         return self.prep_outputs(inputs, outputs, return_only_outputs)
 
     async def acall(
@@ -158,6 +165,19 @@ class Chain(BaseModel, ABC):
             self.callback_manager.on_chain_end(outputs, verbose=self.verbose)
         return self.prep_outputs(inputs, outputs, return_only_outputs)
 
+
+    def store_textbuffer(self, input_values: Dict[str, str], output_values: Dict[str, str]) -> None:
+        buffer_index = self.textbuffer_index
+
+        data_dict = {
+            "inputs": input_values,
+            "outputs": output_values,
+        }
+        self.textbuffer[buffer_index] = data_dict
+        self.textbuffer_index += 1
+
+
+
     def prep_outputs(
         self,
         inputs: Dict[str, str],
@@ -165,7 +185,10 @@ class Chain(BaseModel, ABC):
         return_only_outputs: bool = False,
     ) -> Dict[str, str]:
         """Validate and prep outputs."""
+
         self._validate_outputs(outputs)
+
+
         if self.memory is not None:
             self.memory.save_context(inputs, outputs)
         if return_only_outputs:
