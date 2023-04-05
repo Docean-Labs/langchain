@@ -19,16 +19,16 @@ Here are some examples:
 
 Fake endpoints for examples:
 GET /user to get information about the current user
-GET /products/search search across products
-POST /users/{{id}}/cart to add products to a user's cart
+...
 
 User query: tell me a joke
 Plan: Sorry, this API's domain is shopping, not comedy.
 
 Usery query: I want to buy a couch
-Plan: 1. GET /products/search to search for couches
-2. GET /user to find the user's id
-3. POST /users/{{id}}/cart to add a couch to the user's cart
+Plan: 
+1. GET /products/search to search for couches
+2. ...
+...
 
 ----
 
@@ -107,14 +107,14 @@ User query: can you add some trendy stuff to my shopping cart.
 Thought: I should plan API calls first.
 Action: api_planner
 Action Input: I need to find the right API calls to add trendy items to the users shopping cart
-Observation: 1) GET /items/trending to get trending item ids
-2) GET /user to get user
-3) POST /cart to post the trending items to the user's cart
+Observation: 
+1) GET /items/trending to get trending item ids
+2) ...
+...
 Thought: I'm ready to execute the API calls.
 Action: api_controller
 Action Input: 1) GET /items/trending to get trending item ids
-2) GET /user to get user
-3) POST /cart to post the trending items to the user's cart
+2) ...
 ...
 
 Begin!

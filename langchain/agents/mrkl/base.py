@@ -44,10 +44,10 @@ def get_action_and_input(llm_output: str) -> Tuple[str, str]:
     # \s matches against tab/newline/whitespace
     regex = r"Action: (.*?)[\n]*Action Input:[\s]*(.*)"
     match = re.search(regex, llm_output, re.DOTALL)
-    if not match:
-        raise ValueError(f"Could not parse LLM output: `{llm_output}`")
-    action = match.group(1).strip()
-    action_input = match.group(2)
+    # if not match:
+    #     raise ValueError(f"Could not parse LLM output: `{llm_output}`")
+    action = match.group(1).strip() or "None"
+    action_input = match.group(2) or "None"
     return action, action_input.strip(" ").strip('"')
 
 

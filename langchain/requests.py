@@ -6,6 +6,20 @@ import requests
 from pydantic import BaseModel, Extra
 
 
+def _prep_output(response):
+    if 'application/json' in response.headers['Content-Type']:
+        return response.text
+    else:
+        return "Not found any relevant information, please choose another URL."
+
+
+async def _aprep_output(response):
+    if 'application/json' in response.headers['Content-Type']:
+        return await response.text()
+    else:
+        return "Not found any relevant information, please choose another URL."
+
+
 class Requests(BaseModel):
     """Wrapper around requests to handle auth and async.
 
@@ -106,48 +120,48 @@ class TextRequestsWrapper(BaseModel):
 
     def get(self, url: str, **kwargs: Any) -> str:
         """GET the URL and return the text."""
-        return self.requests.get(url, **kwargs).text
+        return _prep_output(self.requests.get(url, **kwargs))
 
     def post(self, url: str, data: Dict[str, Any], **kwargs: Any) -> str:
         """POST to the URL and return the text."""
-        return self.requests.post(url, data, **kwargs).text
+        return _prep_output(self.requests.post(url, data, **kwargs))
 
     def patch(self, url: str, data: Dict[str, Any], **kwargs: Any) -> str:
         """PATCH the URL and return the text."""
-        return self.requests.patch(url, data, **kwargs).text
+        return _prep_output(self.requests.patch(url, data, **kwargs))
 
     def put(self, url: str, data: Dict[str, Any], **kwargs: Any) -> str:
         """PUT the URL and return the text."""
-        return self.requests.put(url, data, **kwargs).text
+        return _prep_output(self.requests.put(url, data, **kwargs))
 
     def delete(self, url: str, **kwargs: Any) -> str:
         """DELETE the URL and return the text."""
-        return self.requests.delete(url, **kwargs).text
+        return _prep_output(self.requests.delete(url, **kwargs))
 
     async def aget(self, url: str, **kwargs: Any) -> str:
         """GET the URL and return the text asynchronously."""
         response = await self.requests.aget(url, **kwargs)
-        return await response.text()
+        return await _aprep_output(response)
 
     async def apost(self, url: str, data: Dict[str, Any], **kwargs: Any) -> str:
         """POST to the URL and return the text asynchronously."""
         response = await self.requests.apost(url, data, **kwargs)
-        return await response.text()
+        return await _aprep_output(response)
 
     async def apatch(self, url: str, data: Dict[str, Any], **kwargs: Any) -> str:
         """PATCH the URL and return the text asynchronously."""
         response = await self.requests.apatch(url, data, **kwargs)
-        return await response.text()
+        return await _aprep_output(response)
 
     async def aput(self, url: str, data: Dict[str, Any], **kwargs: Any) -> str:
         """PUT the URL and return the text asynchronously."""
         response = await self.requests.aput(url, data, **kwargs)
-        return await response.text()
+        return await _aprep_output(response)
 
     async def adelete(self, url: str, **kwargs: Any) -> str:
         """DELETE the URL and return the text asynchronously."""
         response = await self.requests.adelete(url, **kwargs)
-        return await response.text()
+        return await _aprep_output(response)
 
 
 # For backwards compatibility
