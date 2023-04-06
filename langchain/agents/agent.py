@@ -283,6 +283,7 @@ class Agent(BaseSingleActionAgent):
             Action specifying what tool to use.
         """
         full_inputs = self.get_full_inputs(intermediate_steps, **kwargs)
+
         action = self._get_next_action(full_inputs)
         if action.tool == self.finish_tool_name:
             return AgentFinish({"output": action.tool_input}, action.log)
