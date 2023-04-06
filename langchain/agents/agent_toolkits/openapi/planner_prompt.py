@@ -17,9 +17,9 @@ The plan will be passed to an API controller that can format it into web request
 
 Here are some examples:
 
-Fake endpoints for examples:
+Endpoints are as followed:
 GET /user to get information about the current user
-...
+GET[POST] /[param] functionality
 
 User query: tell me a joke
 Plan: Sorry, this API's domain is shopping, not comedy.
@@ -27,8 +27,7 @@ Plan: Sorry, this API's domain is shopping, not comedy.
 Usery query: I want to buy a couch
 Plan: 
 1. GET /products/search to search for couches
-2. ...
-...
+2. GET[POST] /[param] functionality
 
 ----
 
@@ -94,7 +93,7 @@ Starting below, you should follow this format:
 
 User query: the query a User wants help with related to the API
 Thought: you should always think about what to do
-Action: the action to take, should be one of the tools [{tool_names}]
+Action: the action to take, must be only one of the tools [{tool_names}]
 Action Input: the input to the action
 Observation: the result of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
@@ -107,14 +106,13 @@ User query: can you add some trendy stuff to my shopping cart.
 Thought: I should plan API calls first.
 Action: api_planner
 Action Input: I need to find the right API calls to add trendy items to the users shopping cart
-Observation: 
-1) GET /items/trending to get trending item ids
-2) ...
+Observation: 1) GET /items/trending to get trending item ids
+2) GET[POST] /[param] functionality
 ...
 Thought: I'm ready to execute the API calls.
 Action: api_controller
 Action Input: 1) GET /items/trending to get trending item ids
-2) ...
+2) GET[POST] /[param] functionality
 ...
 
 Begin!
@@ -142,7 +140,7 @@ REQUESTS_POST_TOOL_DESCRIPTION = """Use this when you want to POST to a website.
 Input to the tool should be a json string with 3 keys: "url", "data", and "output_instructions".
 The value of "url" should be a string.
 The value of "data" should be a dictionary of key-value pairs you want to POST to the url.
-The value of "summary_instructions" should be instructions on what information to extract from the response, for example the id(s) for a resource(s) that the POST request creates.
+The value of "output_instructions" should be instructions on what information to extract from the response, for example the id(s) for a resource(s) that the POST request creates.
 Always use double quotes for strings in the json string."""
 
 PARSING_POST_PROMPT = PromptTemplate(
