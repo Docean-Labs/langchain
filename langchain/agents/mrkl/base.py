@@ -42,16 +42,22 @@ def get_action_and_input(llm_output: str) -> Tuple[str, str]:
     if FINAL_ANSWER_ACTION in llm_output:
         return "Final Answer", llm_output.split(FINAL_ANSWER_ACTION)[-1].strip()
     # \s matches against tab/newline/whitespace
-    regex = r"Action: (.*?)[\n]*Action Input:[\s]*(.*)"
-    match = re.search(regex, llm_output, re.DOTALL)
-    if not match:
-        # raise ValueError(f"Could not parse LLM output: `{llm_output}`")
+    regex_action = r"Action:\s*([^\n]*)"
+    regex_input = r"[\n]*Action Input:[\s]*(.*)"
+    match_action = re.search(regex_action, llm_output, re.DOTALL)
+    match_input = re.search(regex_input, llm_output, re.DOTALL)
+    # 1. match action
+    if not match_action:
         action = "END"
-        action_input = "NONE"
     else:
-        action = match.group(1).strip() or "None"
-        action_input = match.group(2) or "None"
-    return action, action_input.strip(" ").strip('"')
+        action = match_action.group(1).strip()
+
+    # 2. match action input
+    if not match_input:
+        action_input = "None"
+    else:
+        action_input = match_input.group(1)
+    return action, action_input.strip(" ").strip('"').strip("'")
 
 
 class ZeroShotAgent(Agent):
