@@ -4,21 +4,20 @@ from langchain.prompts.prompt import PromptTemplate
 
 API_PLANNER_PROMPT = """You are a planner that plans a sequence of API calls to assist with user queries against an API.
 
-You should:
-1) evaluate whether the user query can be solved by the API documentated below. If no, say why.
-2) if yes, generate a plan of API calls and say what they are doing step by step.
+There are two rules you must follow:
+1) evaluate whether the user query can be solved by the API documentated below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
+2) your "Plan" must be only belongs to one of all endpoints given.
 
-You should only use API endpoints documented below ("Endpoints you can use:").
-Some user queries can be resolved in a single API call, but some will require several API calls.
-The plan will be passed to an API controller that can format it into web requests and return the responses.
+You must only use API endpoints documented below ("Endpoints you can use:").
+Some user queries may be resolved in a single API call, but some will require several API calls.
+Your "Plan" will be passed to an API controller that can format it into web requests and return the responses.
 
 ----
 
 Here are some examples:
 
 Endpoints are as followed:
-GET /user to get information about the current user
-GET[POST] /[param] functionality
+GET /products/search to search for couches
 
 User query: tell me a joke
 Plan: Sorry, this API's domain is shopping, not comedy.
@@ -26,7 +25,6 @@ Plan: Sorry, this API's domain is shopping, not comedy.
 Usery query: I want to buy a couch
 Plan: 
 1. GET /products/search to search for couches
-2. GET[POST] /[param] functionality
 
 ----
 
@@ -35,9 +33,13 @@ Here are endpoints you can use. Do not reference any of the endpoints above.
 {endpoints}
 
 ----
+Note: Your "Plan" must be one of the endpoints given above, not any other statement.
+---
+Begin:
 
 User query: {query}
-Plan:"""
+Plan:
+"""
 API_PLANNER_TOOL_NAME = "api_planner"
 API_PLANNER_TOOL_DESCRIPTION = f"Can be used to generate the right API calls to assist with a user query, like {API_PLANNER_TOOL_NAME}(query). Should always be called before trying to calling the API controller."
 
