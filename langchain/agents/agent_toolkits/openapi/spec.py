@@ -56,6 +56,7 @@ def dereference_refs(spec_obj: dict, full_spec: dict) -> Union[dict, list]:
 @dataclass(frozen=True)
 class ReducedOpenAPISpec:
     servers: List[dict]
+    name: str
     description: str
     endpoints: List[Tuple[str, str, dict]]
 
@@ -89,6 +90,8 @@ def reduce_openapi_spec(spec: dict, dereference: bool = True) -> ReducedOpenAPIS
         out = {}
         if docs.get("description"):
             out["description"] = docs.get("description")
+        elif docs.get("summary"):
+            out["description"] = docs.get("summary")
         if docs.get("parameters"):
             out["parameters"] = [
                 parameter

@@ -17,14 +17,14 @@ Your "Plan" will be passed to an API controller that can format it into web requ
 Here are some examples:
 
 Endpoints are as followed:
-GET /products/search to search for couches
+GET /products/search to search for any products
 
 User query: tell me a joke
 Plan: Sorry, this API's domain is shopping, not comedy.
 
 Usery query: I want to buy a couch
 Plan: 
-1. GET /products/search to search for couches
+1. GET /products/search to search for any products
 
 ----
 
@@ -41,7 +41,7 @@ User query: {query}
 Plan:
 """
 API_PLANNER_TOOL_NAME = "api_planner"
-API_PLANNER_TOOL_DESCRIPTION = f"Can be used to generate the right API calls to assist with a user query, like {API_PLANNER_TOOL_NAME}(query). Should always be called before trying to calling the API controller."
+API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from {0} api docs to assist with a user query, like api_planner (query) of {0} . Should always be called before trying to calling the {0} api_controller. There is the description of the {0}: {1}"
 
 # Execution.
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
@@ -61,7 +61,7 @@ Starting below, you should follow this format:
 
 Plan: the plan of API calls to execute
 Thought: you should always think about what to do
-Action: the action to take, should be one of the tools [{tool_names}]
+Action: select the most suitable tool from [{tool_names}]
 Action Input: the input to the action
 Observation: the output of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
@@ -76,7 +76,7 @@ Thought:
 {agent_scratchpad}
 """
 API_CONTROLLER_TOOL_NAME = "api_controller"
-API_CONTROLLER_TOOL_DESCRIPTION = f"Can be used to execute a plan of API calls, like {API_CONTROLLER_TOOL_NAME}(plan)."
+API_CONTROLLER_TOOL_DESCRIPTION = "Can be used to execute a plan of API calls, like api_controller(plan) of {0}."
 
 # Orchestrate planning + execution.
 # The goal is to have an agent at the top-level (e.g. so it can recover from errors and re-plan) while

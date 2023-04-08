@@ -104,8 +104,8 @@ def _create_api_planner_tool(
     )
     chain = LLMChain(llm=llm, prompt=prompt)
     tool = Tool(
-        name=API_PLANNER_TOOL_NAME,
-        description=API_PLANNER_TOOL_DESCRIPTION,
+        name=api_spec.name+" "+API_PLANNER_TOOL_NAME,
+        description=API_PLANNER_TOOL_DESCRIPTION.format(api_spec.name, api_spec.description),
         func=chain.run,
     )
     return tool
@@ -154,6 +154,45 @@ def _create_api_controller_tool(
 
     base_url = api_spec.servers[0]["url"]  # TODO: do better.
 
+    def check_name_matches_names(names: dict, name: str) -> tuple:
+        for endpoint_key in names.keys():
+            method, path = endpoint_key.split(" ", 1)
+            name_method, name_path = name.split(" ", 1)
+
+            if method != name_method:
+                continue
+
+            endpoint_parts = path.strip("/").split("/")
+            name_parts = name_path.strip("/").split("/")
+
+            if len(endpoint_parts) != len(name_parts):
+                continue
+
+            match = True
+
+            for endpoint_part, name_part in zip(endpoint_parts, name_parts):
+                if endpoint_part.startswith("{") and endpoint_part.endswith("}"):
+                    param_info = names[endpoint_key]
+                    param_name = endpoint_part[1:-1]
+
+                    param = None
+                    for p in param_info["parameters"]:
+                        if p["name"] == param_name:
+                            param = p
+
+                    if param and "enum" in param.get("schema", {}):
+                        if name_part not in param["schema"]["enum"]:
+                            match = False
+                            break
+                elif endpoint_part != name_part:
+                    match = False
+                    break
+
+            if match:
+                return True, endpoint_key
+
+        return False, None
+
     def _create_and_run_api_controller_agent(plan_str: str) -> str:
         pattern = r"\b(GET|POST)\s+(/\S+)*"
         matches = re.findall(pattern, plan_str)
@@ -162,20 +201,21 @@ def _create_api_controller_tool(
             for method, route in matches
         ]
         endpoint_docs_by_name = {name: docs for name, _, docs in api_spec.endpoints}
+
         docs_str = ""
         for endpoint_name in endpoint_names:
-            docs = endpoint_docs_by_name.get(endpoint_name)
-            if not docs:
+            matching, matched_key = check_name_matches_names(endpoint_docs_by_name, endpoint_name)
+            if not matching:
                 raise ValueError(f"{endpoint_name} endpoint does not exist.")
-            docs_str += f"== Docs for {endpoint_name} == \n{yaml.dump(docs)}\n"
 
+            docs_str += f"== Docs for {endpoint_name} == \n{yaml.dump(endpoint_docs_by_name.get(matched_key))}\n"
         agent = _create_api_controller_agent(base_url, docs_str, requests_wrapper, llm)
         return agent.run(plan_str)
 
     return Tool(
-        name=API_CONTROLLER_TOOL_NAME,
+        name=api_spec.name+" "+API_CONTROLLER_TOOL_NAME,
         func=_create_and_run_api_controller_agent,
-        description=API_CONTROLLER_TOOL_DESCRIPTION,
+        description=API_CONTROLLER_TOOL_DESCRIPTION.format(api_spec.name),
     )
 
 
@@ -196,6 +236,41 @@ def create_openapi_agent(
         _create_api_planner_tool(api_spec, llm),
         _create_api_controller_tool(api_spec, requests_wrapper, llm),
     ]
+    prompt = PromptTemplate(
+        template=API_ORCHESTRATOR_PROMPT,
+        input_variables=["input", "agent_scratchpad"],
+        partial_variables={
+            "tool_names": ", ".join([tool.name for tool in tools]),
+            "tool_descriptions": "\n".join(
+                [f"{tool.name}: {tool.description}" for tool in tools]
+            ),
+        },
+    )
+    agent = ZeroShotAgent(
+        llm_chain=LLMChain(llm=llm, prompt=prompt),
+        allowed_tools=[tool.name for tool in tools],
+    )
+    return AgentExecutor.from_agent_and_tools(agent=agent, tools=tools, verbose=True)
+
+
+def create_openapi_agent_by_list(
+    api_specs: List[ReducedOpenAPISpec],
+    requests_wrapper: RequestsWrapper,
+    llm: BaseLanguageModel,
+) -> AgentExecutor:
+    """Instantiate API planner and controller for a given spec.
+
+    Inject credentials via requests_wrapper.
+
+    We use a top-level "orchestrator" agent to invoke the planner and controller,
+    rather than a top-level planner
+    that invokes a controller with its plan. This is to keep the planner simple.
+    """
+    tools = []
+    for api_spec in api_specs:
+        tools.append(_create_api_planner_tool(api_spec, llm))
+        tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm))
+
     prompt = PromptTemplate(
         template=API_ORCHESTRATOR_PROMPT,
         input_variables=["input", "agent_scratchpad"],
