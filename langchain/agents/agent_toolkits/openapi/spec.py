@@ -108,6 +108,7 @@ def reduce_openapi_spec(spec: dict, dereference: bool = True) -> ReducedOpenAPIS
     ]
     return ReducedOpenAPISpec(
         servers=spec["servers"],
+        name=spec["info"].get("title"),
         description=spec["info"].get("description", ""),
         endpoints=endpoints,
     )
