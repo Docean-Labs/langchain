@@ -115,6 +115,7 @@ class ChatOpenAI(BaseChatModel):
     model_kwargs: Dict[str, Any] = Field(default_factory=dict)
     """Holds any model parameters valid for `create` call not explicitly specified."""
     openai_api_key: Optional[str] = None
+    openai_organization: Optional[str] = None
     request_timeout: int = 60
     """Timeout in seconds for the OpenAPI request."""
     max_retries: int = 6
@@ -400,5 +401,5 @@ class ChatOpenAI(BaseChatModel):
                 if key == "name":
                     num_tokens += tokens_per_name
         # every reply is primed with <im_start>assistant
-        num_tokens += 2
+        num_tokens += 3
         return num_tokens
