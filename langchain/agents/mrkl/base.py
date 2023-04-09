@@ -30,8 +30,7 @@ class ChainConfig(NamedTuple):
     action: Callable
     action_description: str
 
-
-def get_action_and_input(llm_output: str) -> Tuple[str, str]:
+def get_action_and_input(llm_output: str) -> Tuple[bool,Tuple[str, str]]:
     """Parse out the action and input from the LLM output.
 
     Note: if you're specifying a custom prompt for the ZeroShotAgent,
@@ -40,24 +39,30 @@ def get_action_and_input(llm_output: str) -> Tuple[str, str]:
     with "Action Input:" should be separated by a newline.
     """
     if FINAL_ANSWER_ACTION in llm_output:
-        return "Final Answer", llm_output.split(FINAL_ANSWER_ACTION)[-1].strip()
+        return True,("Final Answer", llm_output.split(FINAL_ANSWER_ACTION)[-1].strip())
     # \s matches against tab/newline/whitespace
-    regex_action = r"Action:\s*([^\n]*)"
-    regex_input = r"[\n]*Action Input:[\s]*(.*)"
-    match_action = re.search(regex_action, llm_output, re.DOTALL)
-    match_input = re.search(regex_input, llm_output, re.DOTALL)
-    # 1. match action
-    if not match_action:
-        action = "END"
-    else:
-        action = match_action.group(1).strip()
+    regex = r"Action: (.*?)[\n]*Action Input:[\s]*(.*)"
+    match = re.search(regex, llm_output, re.DOTALL)
+    # if not match:
+    #     raise ValueError(f"Could not parse LLM output: `{llm_output}`")
+    action_regex = r"Action: (.*?)"
+    action_input_regex = r"Action Input:[\s]*(.*)"
+    match_action = re.search(action_regex, llm_output, re.DOTALL)
+    match_action_input = re.search(action_input_regex, llm_output, re.DOTALL)
 
-    # 2. match action input
-    if not match_input:
-        action_input = "None"
-    else:
-        action_input = match_input.group(1)
-    return action, action_input.strip(" ").strip('"').strip("'")
+
+    if not match_action or not match_action_input:
+        return False, "There is no 'Action:' and 'Action Input:' while generating an answer"
+
+    if not match_action:
+        return False, "There is no 'Action:'  while generating an answer"
+
+    if not match_action:
+        return False, "There is no 'Action Input:'  while generating an answer"
+
+    action = match.group(1).strip()
+    action_input = match.group(2)
+    return True,(action, action_input.strip(" ").strip('"'))
 
 
 class ZeroShotAgent(Agent):
