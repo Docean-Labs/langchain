@@ -152,7 +152,11 @@ class ZeroShotAgent(Agent):
 
     def _extract_tool_and_input(self, text: str) -> Optional[Tuple[bool,Tuple[str, str]]]:
         return get_action_and_input(text)
+    
+    def _fix_text(self, text: str) -> str:
+        return f"{text}\nIf you believe this is not a reasonable question to be using this tool for, you may generate a final answer directly or choose another tool. However, if you believe this is a reasonable question to be using this tool for, please output the correct action and action input based on the error message from the action or action input."
 
+    
 
 class MRKLChain(AgentExecutor):
     """Chain that implements the MRKL system.
