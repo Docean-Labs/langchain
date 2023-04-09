@@ -62,7 +62,7 @@ def get_action_and_input(llm_output: str) -> Tuple[bool,Tuple[str, str]]:
 
     action = match.group(1).strip()
     action_input = match.group(2)
-    return True,(action, action_input.strip(" ").strip('"'))
+    return True, (action, action_input.strip(" ").strip('"').strip("'"))
 
 
 class ZeroShotAgent(Agent):
