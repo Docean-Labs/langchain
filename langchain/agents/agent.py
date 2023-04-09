@@ -363,14 +363,17 @@ class Agent(BaseSingleActionAgent):
     def _get_next_action(self, full_inputs: Dict[str, str]) -> AgentAction:
         full_output = self.llm_chain.predict(**full_inputs)
         parsed_output = self._extract_tool_and_input(full_output)
-        while parsed_output is None:
+        while parsed_output is None or not parsed_output[0]:
             full_output = self._fix_text(full_output)
-            full_inputs["agent_scratchpad"] += full_output
+            full_inputs["agent_scratchpad"] += full_output 
+            full_inputs["agent_scratchpad"] += parsed_output[1] 
+
             output = self.llm_chain.predict(**full_inputs)
             full_output += output
             parsed_output = self._extract_tool_and_input(full_output)
+
         return AgentAction(
-            tool=parsed_output[0], tool_input=parsed_output[1], log=full_output
+            tool=parsed_output[1][0], tool_input=parsed_output[1][1], log=full_output
         )
 
     async def _aget_next_action(self, full_inputs: Dict[str, str]) -> AgentAction:
