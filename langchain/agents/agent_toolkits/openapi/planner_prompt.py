@@ -5,7 +5,7 @@ from langchain.prompts.prompt import PromptTemplate
 API_PLANNER_PROMPT = """You are a planner that plans a sequence of API calls to assist with user queries against an API.
 
 There are two rules you must follow:
-1) evaluate whether the user query can be solved by the API documentated below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
+1) evaluate whether the user query can be solved by the API documented below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
 2) your "Plan" must be only belongs to one of all endpoints given.
 
 You must only use API endpoints documented below ("Endpoints you can use:").
@@ -115,6 +115,7 @@ Action: api_controller
 Action Input: 1) GET /items/trending to get trending item ids
 2) GET[POST] /[param] functionality
 ...
+NOTICE: If you believe this is not a reasonable question to be using these tools for, you may generate a final answer directly.
 
 Begin!
 
