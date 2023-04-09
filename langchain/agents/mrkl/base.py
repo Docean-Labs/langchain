@@ -150,7 +150,7 @@ class ZeroShotAgent(Agent):
                     f"a description must always be provided."
                 )
 
-    def _extract_tool_and_input(self, text: str) -> Optional[Tuple[str, str]]:
+    def _extract_tool_and_input(self, text: str) -> Optional[Tuple[bool,Tuple[str, str]]]:
         return get_action_and_input(text)
 
 
