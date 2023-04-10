@@ -4,11 +4,13 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 import time
 from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
+import openai
 import yaml
 from pydantic import BaseModel, root_validator
 
@@ -336,7 +338,7 @@ class Agent(BaseSingleActionAgent):
         return ["output"]
 
     @abstractmethod
-    def _extract_tool_and_input(self, text: str) -> Optional[Tuple[str, str]]:
+    def _extract_tool_and_input(self, text: str):
         """Extract tool and tool input from llm output."""
 
     def _fix_text(self, text: str) -> str:
@@ -360,17 +362,40 @@ class Agent(BaseSingleActionAgent):
             thoughts += f"\n{self.observation_prefix}{observation}\n{self.llm_prefix}"
         return thoughts
 
+    def _prep_action(self):
+        query = "I have the following tools: [{0}]. Sentence: {1}. " \
+                "Please choose the most suitable tool and only output the name of the tool. " \
+                "Do not output any additional information"
+        question = self.llm_chain.textbuffer[0]["inputs"]["input"]
+        openai.api_key = os.environ.get("OPENAI_API_KEY")
+        gen_answer = openai.ChatCompletion.create(
+            messages=[{"role": "user", "content": query.format(self.allowed_tools, question)}],
+            model="gpt-3.5-turbo-0301"
+        )
+        gen_action = gen_answer["choices"][0]["message"]['content']
+        if gen_action not in self.allowed_tools:
+            return True, (self.allowed_tools[0], question)
+        else:
+            return True, (gen_action, question)
+
     def _get_next_action(self, full_inputs: Dict[str, str]) -> AgentAction:
         full_output = self.llm_chain.predict(**full_inputs)
         parsed_output = self._extract_tool_and_input(full_output)
-        while parsed_output is None or not parsed_output[0]:
-            full_output = self._fix_text(full_output)
-            full_inputs["agent_scratchpad"] += full_output 
-            full_inputs["agent_scratchpad"] += parsed_output[1] 
+        max_iterations = 3
+        while parsed_output is None or parsed_output[1][0] not in self.allowed_tools:
+            # Exceeds three attempts and is still unsuccessful, use the original OpenAI-generated Action
+            if max_iterations == 0:
+                parsed_output = self._prep_action()
+                break
+
+            # full_output = self._fix_text(full_output)
+            full_inputs["agent_scratchpad"] += full_output
+            full_inputs["agent_scratchpad"] += parsed_output[1][0]
 
             output = self.llm_chain.predict(**full_inputs)
             full_output += output
             parsed_output = self._extract_tool_and_input(full_output)
+            max_iterations -= 1
 
         return AgentAction(
             tool=parsed_output[1][0], tool_input=parsed_output[1][1], log=full_output
@@ -565,7 +590,7 @@ class AgentExecutor(Chain):
     agent: Union[BaseSingleActionAgent, BaseMultiActionAgent]
     tools: Sequence[BaseTool]
     return_intermediate_steps: bool = False
-    max_iterations: Optional[int] = 15
+    max_iterations: Optional[int] = 10
     max_execution_time: Optional[float] = None
     early_stopping_method: str = "force"
 

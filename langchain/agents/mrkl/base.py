@@ -30,7 +30,8 @@ class ChainConfig(NamedTuple):
     action: Callable
     action_description: str
 
-def get_action_and_input(llm_output: str) -> Tuple[bool,Tuple[str, str]]:
+
+def get_action_and_input(llm_output: str) -> Tuple[bool, Tuple[str, str]]:
     """Parse out the action and input from the LLM output.
 
     Note: if you're specifying a custom prompt for the ZeroShotAgent,
@@ -39,7 +40,7 @@ def get_action_and_input(llm_output: str) -> Tuple[bool,Tuple[str, str]]:
     with "Action Input:" should be separated by a newline.
     """
     if FINAL_ANSWER_ACTION in llm_output:
-        return True,("Final Answer", llm_output.split(FINAL_ANSWER_ACTION)[-1].strip())
+        return True, ("Final Answer", llm_output.split(FINAL_ANSWER_ACTION)[-1].strip())
     # \s matches against tab/newline/whitespace
     regex = r"Action: (.*?)[\n]*Action Input:[\s]*(.*)"
     match = re.search(regex, llm_output, re.DOTALL)
@@ -50,15 +51,14 @@ def get_action_and_input(llm_output: str) -> Tuple[bool,Tuple[str, str]]:
     match_action = re.search(action_regex, llm_output, re.DOTALL)
     match_action_input = re.search(action_input_regex, llm_output, re.DOTALL)
 
-
     if not match_action or not match_action_input:
-        return False, "There is no 'Action:' and 'Action Input:' while generating an answer"
+        return False, ("There is no 'Action:' and 'Action Input:' while generating an answer, please ensure that your answer has both Action and Action Input.", "None")
 
     if not match_action:
-        return False, "There is no 'Action:'  while generating an answer"
+        return False, ("There is no 'Action:'  while generating an answer, please ensure that your answer has both Action and Action Input. ", "None")
 
     if not match_action:
-        return False, "There is no 'Action Input:'  while generating an answer"
+        return False, ("There is no 'Action Input:'  while generating an answer,please ensure that your answer has both Action and Action Input.", "None")
 
     action = match.group(1).strip()
     action_input = match.group(2)
@@ -85,12 +85,12 @@ class ZeroShotAgent(Agent):
 
     @classmethod
     def create_prompt(
-        cls,
-        tools: Sequence[BaseTool],
-        prefix: str = PREFIX,
-        suffix: str = SUFFIX,
-        format_instructions: str = FORMAT_INSTRUCTIONS,
-        input_variables: Optional[List[str]] = None,
+            cls,
+            tools: Sequence[BaseTool],
+            prefix: str = PREFIX,
+            suffix: str = SUFFIX,
+            format_instructions: str = FORMAT_INSTRUCTIONS,
+            input_variables: Optional[List[str]] = None,
     ) -> PromptTemplate:
         """Create prompt in the style of the zero shot agent.
 
@@ -114,15 +114,15 @@ class ZeroShotAgent(Agent):
 
     @classmethod
     def from_llm_and_tools(
-        cls,
-        llm: BaseLanguageModel,
-        tools: Sequence[BaseTool],
-        callback_manager: Optional[BaseCallbackManager] = None,
-        prefix: str = PREFIX,
-        suffix: str = SUFFIX,
-        format_instructions: str = FORMAT_INSTRUCTIONS,
-        input_variables: Optional[List[str]] = None,
-        **kwargs: Any,
+            cls,
+            llm: BaseLanguageModel,
+            tools: Sequence[BaseTool],
+            callback_manager: Optional[BaseCallbackManager] = None,
+            prefix: str = PREFIX,
+            suffix: str = SUFFIX,
+            format_instructions: str = FORMAT_INSTRUCTIONS,
+            input_variables: Optional[List[str]] = None,
+            **kwargs: Any,
     ) -> Agent:
         """Construct an agent from an LLM and tools."""
         cls._validate_tools(tools)
@@ -150,13 +150,12 @@ class ZeroShotAgent(Agent):
                     f"a description must always be provided."
                 )
 
-    def _extract_tool_and_input(self, text: str) -> Optional[Tuple[bool,Tuple[str, str]]]:
+    def _extract_tool_and_input(self, text: str) -> Optional[Tuple[bool, Tuple[str, str]]]:
         return get_action_and_input(text)
-    
-    def _fix_text(self, text: str) -> str:
-        return f"{text}\nIf you believe this is not a reasonable question to be using this tool for, you may generate a final answer directly or choose another tool. However, if you believe this is a reasonable question to be using this tool for, please output the correct action and action input based on the error message from the action or action input."
 
-    
+    def _fix_text(self, text: str) -> str:
+        return f"{text}"
+
 
 class MRKLChain(AgentExecutor):
     """Chain that implements the MRKL system.
@@ -174,7 +173,7 @@ class MRKLChain(AgentExecutor):
 
     @classmethod
     def from_chains(
-        cls, llm: BaseLanguageModel, chains: List[ChainConfig], **kwargs: Any
+            cls, llm: BaseLanguageModel, chains: List[ChainConfig], **kwargs: Any
     ) -> AgentExecutor:
         """User friendly way to initialize the MRKL chain.
 

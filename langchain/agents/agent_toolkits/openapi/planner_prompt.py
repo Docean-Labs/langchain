@@ -24,7 +24,7 @@ Plan: Sorry, this API's domain is shopping, not comedy.
 
 Usery query: I want to buy a couch
 Plan: 
-1. GET /products/search to search for any products
+1. GET /products/search to search for any products, contains the couch
 
 ----
 
@@ -33,7 +33,9 @@ Here are endpoints you can use. Do not reference any of the endpoints above.
 {endpoints}
 
 ----
-Note: Your "Plan" must be one of the endpoints given above, not any other statement.
+Notice: 
+1. Your "Plan" must be one of the endpoints given above, not any other statement.
+2. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Please avoid using the content in the example when providing real answers
 ---
 Begin:
 
@@ -41,7 +43,7 @@ User query: {query}
 Plan:
 """
 API_PLANNER_TOOL_NAME = "api_planner"
-API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from {0} api docs to assist with a user query, like api_planner (query) of {0} . Should always be called before trying to calling the {0} api_controller. There is the description of the {0}: {1}"
+API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from {0} Endpoints to assist with a user query, like {0} api_planner(query) . Should always be called before trying to calling the {0} api_controller. There is the description of the {0}: {1}"
 
 # Execution.
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
@@ -76,7 +78,7 @@ Thought:
 {agent_scratchpad}
 """
 API_CONTROLLER_TOOL_NAME = "api_controller"
-API_CONTROLLER_TOOL_DESCRIPTION = "Can be used to execute a plan of API calls, like api_controller(plan) of {0}."
+API_CONTROLLER_TOOL_DESCRIPTION = "Can be used to execute a plan of API calls, like {0} api_controller(plan)."
 
 # Orchestrate planning + execution.
 # The goal is to have an agent at the top-level (e.g. so it can recover from errors and re-plan) while
@@ -86,36 +88,46 @@ Some user queries can be resolved in a single API call though some require sever
 You should always plan your API calls first, and then execute the plan second.
 You should never return information without executing the api_controller tool.
 
-
-Here are the tools to plan and execute API requests: {tool_descriptions}
+Here are the tools to plan and execute API requests: 
+{tool_descriptions}
 
 
 Starting below, you should follow this format:
 
-User query: the query a User wants help with related to the API
-Thought: you should always think about what to do
-Action: the action to take, must be only one of the tools [{tool_names}]
-Action Input: the input to the action
-Observation: the result of the action
-... (this Thought/Action/Action Input/Observation can repeat N times)
-Thought: I am finished executing a plan and have the information the user asked for or the data the used asked to create
-Final Answer: the final output from executing the plan
+User query: the query a User wants help with related to the API.
+Thought: you should always think about what to do.
+Action: select a tool which must be only one of the tools [{tool_names}].
+Action Input: the input to the tool fo the above Action.
+Observation: the result of the Action within Action Input.
+... (this Thought/Action/Action Input/Observation can repeat at most N times)
+Thought: I am finished executing a plan and have the information the user asked for or the data the used asked to create.
+Final Answer: the final output from executing the plan.
 
 
 Example:
-User query: can you add some trendy stuff to my shopping cart.
-Thought: I should plan API calls first.
-Action: api_planner
-Action Input: I need to find the right API calls to add trendy items to the users shopping cart
-Observation: 1) GET /items/trending to get trending item ids
-2) GET[POST] /[param] functionality
-...
+Here are the tools to plan and execute API requests: 
+Shopping Plugin api_planner: Can be used to generate the right API calls from Shopping Plugin Endpoints to assist with a user query, like Shopping Plugin api_planner(query) . Should always be called before trying to calling the Shopping Plugin api_controller. There is the description of the Shopping Plugin: online Shopping.
+Shopping Plugin api_controller: Can be used to execute a plan of API calls, like Shopping Plugin api_controller(plan)."
+Game API Plugin api_planner: Can be used to generate the right API calls from Game API Plugin Endpoints to assist with a user query, like Game API Plugin api_planner(query) . Should always be called before trying to calling the Game API Plugin api_controller. There is the description of the Game API Plugin: searching Games and supply games introduction.
+Game API Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
+QQ Music api_planner: Can be used to generate the right API calls from QQ Music Endpoints to assist with a user query, like QQ Music api_planner(query) . Should always be called before trying to calling the QQ Music api_controller. There is the description of the QQ Music: searching music.
+QQ Music api_controller: Can be used to execute a plan of API calls, like QQ Music api_controller(plan)."
+
+
+User query: can you add five adidas bags to my shopping cart.
+Thought: I should select a suitable planner tool for Action and plan API calls first.
+Action:Shopping Plugin api_planner
+Action Input: "Based on my in-depth understanding of the Shopping Plugin, it does not support adding to cart or other functions that require more privacy. Therefore, I can only assist you by calling the appropriate API to help you find five related products of adidas bags."
+Observation: 1) GET /shop/products to get any products \n
+
 Thought: I'm ready to execute the API calls.
-Action: api_controller
-Action Input: 1) GET /items/trending to get trending item ids
-2) GET[POST] /[param] functionality
+Action:Shopping Plugin api_controller
+Action Input: 1) GET /shop/products to get any products \n
 ...
-NOTICE: If you believe this is not a reasonable question to be using these tools for, you may generate a final answer directly.
+NOTICE: 
+1. If you believe this is not a reasonable question to be using these tools for, you may generate a final answer directly.
+2.The examples above only as a template for providing a response, but the data presented is fictitious and not real. Please avoid using the content in the example when providing real answers
+---
 
 Begin!
 
