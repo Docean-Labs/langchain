@@ -118,11 +118,10 @@ User query: can you add five adidas bags to my shopping cart.
 Thought: I should select a suitable planner tool for Action and plan API calls first.
 Action:Shopping Plugin api_planner
 Action Input: "Based on my in-depth understanding of the Shopping Plugin, it does not support adding to cart or other functions that require more privacy. Therefore, I can only assist you by calling the appropriate API to help you find five related products of adidas bags."
-Observation: 1) GET /shop/products to get any products \n
-
+Observation: 1) GET /shop/products to get any products 
 Thought: I'm ready to execute the API calls.
 Action:Shopping Plugin api_controller
-Action Input: 1) GET /shop/products to get any products \n
+Action Input: 1) GET /shop/products to get any products
 ...
 NOTICE: 
 1. If you believe this is not a reasonable question to be using these tools for, you may generate a final answer directly.
