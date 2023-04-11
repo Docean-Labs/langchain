@@ -201,7 +201,6 @@ def _create_api_controller_tool(
             for method, route in matches
         ]
         endpoint_docs_by_name = {name: docs for name, _, docs in api_spec.endpoints}
-
         docs_str = ""
         for endpoint_name in endpoint_names:
             matching, matched_key = check_name_matches_names(endpoint_docs_by_name, endpoint_name)

@@ -42,7 +42,7 @@ class Chain(BaseModel, ABC):
 
     @validator("callback_manager", pre=True, always=True)
     def set_callback_manager(
-            cls, callback_manager: Optional[BaseCallbackManager]
+        cls, callback_manager: Optional[BaseCallbackManager]
     ) -> BaseCallbackManager:
         """If callback manager is None, set it.
 
@@ -93,7 +93,7 @@ class Chain(BaseModel, ABC):
         raise NotImplementedError("Async call not supported for this chain type.")
 
     def __call__(
-            self, inputs: Union[Dict[str, Any], Any], return_only_outputs: bool = False
+        self, inputs: Union[Dict[str, Any], Any], return_only_outputs: bool = False
     ) -> Dict[str, Any]:
         """Run the logic of this chain and add to output if desired.
 
@@ -107,7 +107,6 @@ class Chain(BaseModel, ABC):
 
         """
         inputs = self.prep_inputs(inputs)
-
         self.callback_manager.on_chain_start(
             {"name": self.__class__.__name__},
             inputs,
@@ -125,7 +124,7 @@ class Chain(BaseModel, ABC):
         return self.prep_outputs(inputs, outputs, return_only_outputs)
 
     async def acall(
-            self, inputs: Union[Dict[str, Any], Any], return_only_outputs: bool = False
+        self, inputs: Union[Dict[str, Any], Any], return_only_outputs: bool = False
     ) -> Dict[str, Any]:
         """Run the logic of this chain and add to output if desired.
 
@@ -175,10 +174,10 @@ class Chain(BaseModel, ABC):
         self.textbuffer_index += 1
 
     def prep_outputs(
-            self,
-            inputs: Dict[str, str],
-            outputs: Dict[str, str],
-            return_only_outputs: bool = False,
+        self,
+        inputs: Dict[str, str],
+        outputs: Dict[str, str],
+        return_only_outputs: bool = False,
     ) -> Dict[str, str]:
         """Validate and prep outputs."""
 

@@ -383,7 +383,7 @@ class Agent(BaseSingleActionAgent):
         parsed_output = self._extract_tool_and_input(full_output)
         max_iterations = 2
 
-        while parsed_output is None or parsed_output[1][0] not in self.allowed_tools:
+        while parsed_output is None or not parsed_output[0]:
             # Exceeds three attempts and is still unsuccessful, use the original OpenAI-generated Action
             if max_iterations == 0:
                 # parsed_output = self._prep_action()
@@ -409,7 +409,7 @@ class Agent(BaseSingleActionAgent):
         full_output = await self.llm_chain.apredict(**full_inputs)
         parsed_output = self._extract_tool_and_input(full_output)
         max_iterations = 2
-        while parsed_output is None or parsed_output[1][0] not in self.allowed_tools:
+        while parsed_output is None or not parsed_output[0]:
             # Exceeds three attempts and is still unsuccessful, use the original OpenAI-generated Action
             if max_iterations == 0:
                 break

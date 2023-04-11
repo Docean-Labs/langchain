@@ -85,12 +85,12 @@ class ZeroShotAgent(Agent):
 
     @classmethod
     def create_prompt(
-            cls,
-            tools: Sequence[BaseTool],
-            prefix: str = PREFIX,
-            suffix: str = SUFFIX,
-            format_instructions: str = FORMAT_INSTRUCTIONS,
-            input_variables: Optional[List[str]] = None,
+        cls,
+        tools: Sequence[BaseTool],
+        prefix: str = PREFIX,
+        suffix: str = SUFFIX,
+        format_instructions: str = FORMAT_INSTRUCTIONS,
+        input_variables: Optional[List[str]] = None,
     ) -> PromptTemplate:
         """Create prompt in the style of the zero shot agent.
 
@@ -114,15 +114,15 @@ class ZeroShotAgent(Agent):
 
     @classmethod
     def from_llm_and_tools(
-            cls,
-            llm: BaseLanguageModel,
-            tools: Sequence[BaseTool],
-            callback_manager: Optional[BaseCallbackManager] = None,
-            prefix: str = PREFIX,
-            suffix: str = SUFFIX,
-            format_instructions: str = FORMAT_INSTRUCTIONS,
-            input_variables: Optional[List[str]] = None,
-            **kwargs: Any,
+        cls,
+        llm: BaseLanguageModel,
+        tools: Sequence[BaseTool],
+        callback_manager: Optional[BaseCallbackManager] = None,
+        prefix: str = PREFIX,
+        suffix: str = SUFFIX,
+        format_instructions: str = FORMAT_INSTRUCTIONS,
+        input_variables: Optional[List[str]] = None,
+        **kwargs: Any,
     ) -> Agent:
         """Construct an agent from an LLM and tools."""
         cls._validate_tools(tools)
@@ -153,9 +153,6 @@ class ZeroShotAgent(Agent):
     def _extract_tool_and_input(self, text: str) -> Optional[Tuple[bool, Tuple[str, str]]]:
         return get_action_and_input(text)
 
-    def _fix_text(self, text: str) -> str:
-        return f"{text}"
-
 
 class MRKLChain(AgentExecutor):
     """Chain that implements the MRKL system.
@@ -173,7 +170,7 @@ class MRKLChain(AgentExecutor):
 
     @classmethod
     def from_chains(
-            cls, llm: BaseLanguageModel, chains: List[ChainConfig], **kwargs: Any
+        cls, llm: BaseLanguageModel, chains: List[ChainConfig], **kwargs: Any
     ) -> AgentExecutor:
         """User friendly way to initialize the MRKL chain.
 
