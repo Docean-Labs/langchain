@@ -409,12 +409,17 @@ class Agent(BaseSingleActionAgent):
     async def _aget_next_action(self, full_inputs: Dict[str, str]) -> AgentAction:
         full_output = await self.llm_chain.apredict(**full_inputs)
         parsed_output = self._extract_tool_and_input(full_output)
+        max_iterations = 2
         while parsed_output is None:
+            # Exceeds three attempts and is still unsuccessful, use the original OpenAI-generated Action
+            if max_iterations == 0:
+                break
             full_output = self._fix_text(full_output)
             full_inputs["agent_scratchpad"] += full_output
             output = await self.llm_chain.apredict(**full_inputs)
             full_output += output
             parsed_output = self._extract_tool_and_input(full_output)
+            max_iterations -= 1
         return AgentAction(
             tool=parsed_output[0], tool_input=parsed_output[1], log=full_output
         )

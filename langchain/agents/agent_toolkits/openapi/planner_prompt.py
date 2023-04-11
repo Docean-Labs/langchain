@@ -110,8 +110,6 @@ Shopping Plugin api_planner: Can be used to generate the right API calls from Sh
 Shopping Plugin api_controller: Can be used to execute a plan of API calls, like Shopping Plugin api_controller(plan)."
 Game API Plugin api_planner: Can be used to generate the right API calls from Game API Plugin Endpoints to assist with a user query, like Game API Plugin api_planner(query) . Should always be called before trying to calling the Game API Plugin api_controller. There is the description of the Game API Plugin: searching Games and supply games introduction.
 Game API Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
-QQ Music api_planner: Can be used to generate the right API calls from QQ Music Endpoints to assist with a user query, like QQ Music api_planner(query) . Should always be called before trying to calling the QQ Music api_controller. There is the description of the QQ Music: searching music.
-QQ Music api_controller: Can be used to execute a plan of API calls, like QQ Music api_controller(plan)."
 
 
 User query: can you add five adidas bags to my shopping cart.
@@ -124,8 +122,7 @@ Action:Shopping Plugin api_controller
 Action Input: 1) GET /shop/products to get any products
 ...
 NOTICE: 
-1. If you believe this is not a reasonable question to be using these tools for, you may generate a final answer directly.
-2.The examples above only as a template for providing a response, but the data presented is fictitious and not real. Please avoid using the content in the example when providing real answers
+1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
 ---
 
 Begin!

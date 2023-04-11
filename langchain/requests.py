@@ -42,7 +42,7 @@ def _prep_output(response):
 
 
 async def _aprep_output(response):
-    if 'application/json' in response.headers['Content-Type']:
+    if 'application/json' in response.headers['Content-Type'] and num_tokens_from_messages(message=response.text) < 4096:
         return await response.text()
     else:
         return "Not found any relevant information, please choose another URL."

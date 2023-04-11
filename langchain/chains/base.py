@@ -42,7 +42,7 @@ class Chain(BaseModel, ABC):
 
     @validator("callback_manager", pre=True, always=True)
     def set_callback_manager(
-        cls, callback_manager: Optional[BaseCallbackManager]
+            cls, callback_manager: Optional[BaseCallbackManager]
     ) -> BaseCallbackManager:
         """If callback manager is None, set it.
 
@@ -93,7 +93,7 @@ class Chain(BaseModel, ABC):
         raise NotImplementedError("Async call not supported for this chain type.")
 
     def __call__(
-        self, inputs: Union[Dict[str, Any], Any], return_only_outputs: bool = False
+            self, inputs: Union[Dict[str, Any], Any], return_only_outputs: bool = False
     ) -> Dict[str, Any]:
         """Run the logic of this chain and add to output if desired.
 
@@ -115,7 +115,7 @@ class Chain(BaseModel, ABC):
         )
         try:
             outputs = self._call(inputs)
-            self.store_textbuffer(inputs,outputs)
+            self.store_textbuffer(inputs, outputs)
 
         except (KeyboardInterrupt, Exception) as e:
             self.callback_manager.on_chain_error(e, verbose=self.verbose)
@@ -125,7 +125,7 @@ class Chain(BaseModel, ABC):
         return self.prep_outputs(inputs, outputs, return_only_outputs)
 
     async def acall(
-        self, inputs: Union[Dict[str, Any], Any], return_only_outputs: bool = False
+            self, inputs: Union[Dict[str, Any], Any], return_only_outputs: bool = False
     ) -> Dict[str, Any]:
         """Run the logic of this chain and add to output if desired.
 
@@ -165,10 +165,8 @@ class Chain(BaseModel, ABC):
             self.callback_manager.on_chain_end(outputs, verbose=self.verbose)
         return self.prep_outputs(inputs, outputs, return_only_outputs)
 
-
     def store_textbuffer(self, input_values: Dict[str, str], output_values: Dict[str, str]) -> None:
         buffer_index = self.textbuffer_index
-
         data_dict = {
             "inputs": input_values,
             "outputs": output_values,
@@ -176,18 +174,15 @@ class Chain(BaseModel, ABC):
         self.textbuffer[buffer_index] = data_dict
         self.textbuffer_index += 1
 
-
-
     def prep_outputs(
-        self,
-        inputs: Dict[str, str],
-        outputs: Dict[str, str],
-        return_only_outputs: bool = False,
+            self,
+            inputs: Dict[str, str],
+            outputs: Dict[str, str],
+            return_only_outputs: bool = False,
     ) -> Dict[str, str]:
         """Validate and prep outputs."""
 
         self._validate_outputs(outputs)
-
 
         if self.memory is not None:
             self.memory.save_context(inputs, outputs)
