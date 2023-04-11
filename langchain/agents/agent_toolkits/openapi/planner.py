@@ -60,16 +60,16 @@ class RequestsGetToolWithParsing(BaseRequestsTool, BaseTool):
         ).strip()
 
     async def _arun(self, text: str) -> str:
-        # raise NotImplementedError()
-        try:
-            data = json.loads(text)
-        except json.JSONDecodeError as e:
-            raise e
-        response = await self.requests_wrapper.aget(data["url"])
-        response = response[: self.response_length]
-        return await self.llm_chain.apredict(
-            response=response, instructions=data["output_instructions"]
-        )
+        raise NotImplementedError()
+        # try:
+        #     data = json.loads(text)
+        # except json.JSONDecodeError as e:
+        #     raise e
+        # response = await self.requests_wrapper.aget(data["url"])
+        # response = response[: self.response_length]
+        # return await self.llm_chain.apredict(
+        #     response=response, instructions=data["output_instructions"]
+        # )
 
 
 class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
@@ -94,16 +94,16 @@ class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
         ).strip()
 
     async def _arun(self, text: str) -> str:
-        # raise NotImplementedError()
-        try:
-            data = json.loads(text)
-        except json.JSONDecodeError as e:
-            raise e
-        response = await self.requests_wrapper.apost(data["url"], data["data"])
-        response = response[: self.response_length]
-        return await self.llm_chain.apredict(
-            response=response, instructions=data["output_instructions"]
-        )
+        raise NotImplementedError()
+        # try:
+        #     data = json.loads(text)
+        # except json.JSONDecodeError as e:
+        #     raise e
+        # response = await self.requests_wrapper.apost(data["url"], data["data"])
+        # response = response[: self.response_length]
+        # return await self.llm_chain.apredict(
+        #     response=response, instructions=data["output_instructions"]
+        # )
 
 #
 # Orchestrator, planner, controller.
