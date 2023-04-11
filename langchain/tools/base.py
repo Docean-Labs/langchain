@@ -120,14 +120,12 @@ class BaseTool(BaseModel):
         try:
             # We then call the tool on the tool input to get an observation
             observation = await self._arun(tool_input)
-        except KeyboardInterrupt as e:
+        except (Exception, KeyboardInterrupt) as e:
             if self.callback_manager.is_async:
                 await self.callback_manager.on_tool_error(e, verbose=verbose_)
             else:
                 self.callback_manager.on_tool_error(e, verbose=verbose_)
             raise e
-        except Exception:
-            observation = await afix_text("JSON format error")
         if self.callback_manager.is_async:
             await self.callback_manager.on_tool_end(
                 observation, verbose=verbose_, color=color, name=self.name, **kwargs
