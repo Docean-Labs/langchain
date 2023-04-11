@@ -379,7 +379,7 @@ class Agent(BaseSingleActionAgent):
             return True, (gen_action, question)
 
     def _get_next_action(self, full_inputs: Dict[str, str]) -> AgentAction:
-        full_output = self.llm_chain.predict(**full_inputs)
+        full_output = self.llm_chain.predict(**full_inputs) + "\n"
         parsed_output = self._extract_tool_and_input(full_output)
         max_iterations = 2
 
@@ -406,7 +406,7 @@ class Agent(BaseSingleActionAgent):
         )
 
     async def _aget_next_action(self, full_inputs: Dict[str, str]) -> AgentAction:
-        full_output = await self.llm_chain.apredict(**full_inputs)
+        full_output = await self.llm_chain.apredict(**full_inputs) + "\n"
         parsed_output = self._extract_tool_and_input(full_output)
         max_iterations = 2
         while parsed_output is None or not parsed_output[0]:
