@@ -60,7 +60,8 @@ class RequestsGetToolWithParsing(BaseRequestsTool, BaseTool):
         ).strip()
 
     async def _arun(self, text: str) -> str:
-        raise NotImplementedError()
+        return self._run(text)
+        # raise NotImplementedError()
         # try:
         #     data = json.loads(text)
         # except json.JSONDecodeError as e:
@@ -94,7 +95,8 @@ class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
         ).strip()
 
     async def _arun(self, text: str) -> str:
-        raise NotImplementedError()
+        return self._run(text)
+        # raise NotImplementedError()
         # try:
         #     data = json.loads(text)
         # except json.JSONDecodeError as e:
