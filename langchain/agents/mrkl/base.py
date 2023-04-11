@@ -153,6 +153,9 @@ class ZeroShotAgent(Agent):
     def _extract_tool_and_input(self, text: str) -> Optional[Tuple[bool, Tuple[str, str]]]:
         return get_action_and_input(text)
 
+    def _fix_text(self, text: str) -> str:
+        return f"{text}\n"
+
 
 class MRKLChain(AgentExecutor):
     """Chain that implements the MRKL system.
