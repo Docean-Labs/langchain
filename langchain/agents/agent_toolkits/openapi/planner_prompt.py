@@ -16,15 +16,15 @@ Your "Plan" will be passed to an API controller that can format it into web requ
 
 Here are some examples:
 
-Endpoints are as followed:
-GET /products/search to search for any products
+Fake Endpoints are as followed:
+GET /products/search | To search across products
 
 User query: tell me a joke
 Plan: Sorry, this API's domain is shopping, not comedy.
 
 Usery query: I want to buy a couch
 Plan: 
-1. GET /products/search to search for any products, contains the couch
+1. GET /products/search | To search across products, contains your couch.
 
 ----
 
@@ -34,9 +34,9 @@ Here are endpoints you can use. Do not reference any of the endpoints above.
 
 ----
 Notice: 
-1. Your "Plan" must be one of the endpoints given above, not any other statement.
-2. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Please avoid using the content in the example when providing real answers
+Your "Plan" must be one of the endpoints given above, not any other statement.
 ---
+
 Begin:
 
 User query: {query}
@@ -47,7 +47,7 @@ API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from
 
 # Execution.
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
-If you cannot complete them and run into issues, you should explain the issue. If you're able to resolve an API call, you can retry the API call. When interacting with API objects, you should extract ids for inputs to other API calls but ids and names for outputs returned to the User.
+If you cannot complete them and run into issues, you should explain the issue. If you're able to resolve an API call, you can retry the API call. When interacting with API objects, you may extract ids for inputs to other API calls but ids and names for outputs returned to the User.
 
 
 Here is documentation on the API:
@@ -116,10 +116,10 @@ User query: can you add five adidas bags to my shopping cart.
 Thought: I should select a suitable planner tool for Action and plan API calls first.
 Action:Shopping Plugin api_planner
 Action Input: "Based on my in-depth understanding of the Shopping Plugin, it does not support adding to cart or other functions that require more privacy. Therefore, I can only assist you by calling the appropriate API to help you find five related products of adidas bags."
-Observation: 1) GET /shop/products to get any products 
+Observation: 1) GET /shop/products | To get any products 
 Thought: I'm ready to execute the API calls.
 Action:Shopping Plugin api_controller
-Action Input: 1) GET /shop/products to get any products
+Action Input: 1) GET /shop/products | To get any products
 ...
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.

@@ -392,7 +392,6 @@ class Agent(BaseSingleActionAgent):
 
             # full_output = self._fix_text(full_output)
             full_inputs["agent_scratchpad"] += full_output
-            full_inputs["agent_scratchpad"] += parsed_output[1][0]
 
             output = self.llm_chain.predict(**full_inputs)
             parsed_output = self._extract_tool_and_input(full_output)
@@ -410,7 +409,7 @@ class Agent(BaseSingleActionAgent):
         full_output = await self.llm_chain.apredict(**full_inputs)
         parsed_output = self._extract_tool_and_input(full_output)
         max_iterations = 2
-        while parsed_output is None:
+        while parsed_output is None or parsed_output[1][0] not in self.allowed_tools:
             # Exceeds three attempts and is still unsuccessful, use the original OpenAI-generated Action
             if max_iterations == 0:
                 break
@@ -421,7 +420,7 @@ class Agent(BaseSingleActionAgent):
             parsed_output = self._extract_tool_and_input(full_output)
             max_iterations -= 1
         return AgentAction(
-            tool=parsed_output[0], tool_input=parsed_output[1], log=full_output
+            tool=parsed_output[1][0], tool_input=parsed_output[1][1], log=full_output
         )
 
     def plan(
