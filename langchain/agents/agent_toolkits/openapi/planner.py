@@ -60,7 +60,16 @@ class RequestsGetToolWithParsing(BaseRequestsTool, BaseTool):
         ).strip()
 
     async def _arun(self, text: str) -> str:
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        try:
+            data = json.loads(text)
+        except json.JSONDecodeError as e:
+            raise e
+        response = await self.requests_wrapper.aget(data["url"])
+        response = response[: self.response_length]
+        return await self.llm_chain.apredict(
+            response=response, instructions=data["output_instructions"]
+        )
 
 
 class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
@@ -85,8 +94,16 @@ class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
         ).strip()
 
     async def _arun(self, text: str) -> str:
-        raise NotImplementedError()
-
+        # raise NotImplementedError()
+        try:
+            data = json.loads(text)
+        except json.JSONDecodeError as e:
+            raise e
+        response = await self.requests_wrapper.apost(data["url"], data["data"])
+        response = response[: self.response_length]
+        return await self.llm_chain.apredict(
+            response=response, instructions=data["output_instructions"]
+        )
 
 #
 # Orchestrator, planner, controller.
@@ -106,7 +123,8 @@ def _create_api_planner_tool(
     tool = Tool(
         name=api_spec.name+" "+API_PLANNER_TOOL_NAME,
         description=API_PLANNER_TOOL_DESCRIPTION.format(api_spec.name, api_spec.description),
-        func=chain.run,
+        coroutine=chain.arun,
+        func=chain.run
     )
     return tool
 
@@ -211,10 +229,29 @@ def _create_api_controller_tool(
         agent = _create_api_controller_agent(base_url, docs_str, requests_wrapper, llm)
         return agent.run(plan_str)
 
+    async def _acreate_and_run_api_controller_agent(plan_str: str) -> str:
+        pattern = r"\b(GET|POST)\s+(/\S+)*"
+        matches = re.findall(pattern, plan_str)
+        endpoint_names = [
+            "{method} {route}".format(method=method, route=route.split("?")[0])
+            for method, route in matches
+        ]
+        endpoint_docs_by_name = {name: docs for name, _, docs in api_spec.endpoints}
+        docs_str = ""
+        for endpoint_name in endpoint_names:
+            matching, matched_key = check_name_matches_names(endpoint_docs_by_name, endpoint_name)
+            if not matching:
+                raise ValueError(f"{endpoint_name} endpoint does not exist.")
+
+            docs_str += f"== Docs for {endpoint_name} == \n{yaml.dump(endpoint_docs_by_name.get(matched_key))}\n"
+        agent = _create_api_controller_agent(base_url, docs_str, requests_wrapper, llm)
+        return await agent.arun(plan_str)
+
     return Tool(
         name=api_spec.name+" "+API_CONTROLLER_TOOL_NAME,
-        func=_create_and_run_api_controller_agent,
+        coroutine=_acreate_and_run_api_controller_agent,
         description=API_CONTROLLER_TOOL_DESCRIPTION.format(api_spec.name),
+        func=_create_and_run_api_controller_agent
     )
 
 
