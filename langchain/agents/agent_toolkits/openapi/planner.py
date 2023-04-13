@@ -107,11 +107,12 @@ class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
         #     response=response, instructions=data["output_instructions"]
         # )
 
+
 #
 # Orchestrator, planner, controller.
 #
 def _create_api_planner_tool(
-    api_spec: ReducedOpenAPISpec, llm: BaseLanguageModel
+        api_spec: ReducedOpenAPISpec, llm: BaseLanguageModel, plugins: Optional[dict]
 ) -> Tool:
     endpoint_descriptions = [
         f"{name} {description}" for name, description, _ in api_spec.endpoints
@@ -123,8 +124,8 @@ def _create_api_planner_tool(
     )
     chain = LLMChain(llm=llm, prompt=prompt)
     tool = Tool(
-        name=api_spec.name+" "+API_PLANNER_TOOL_NAME,
-        description=API_PLANNER_TOOL_DESCRIPTION.format(api_spec.name, api_spec.description),
+        name=plugins["name"] + " " + API_PLANNER_TOOL_NAME,
+        description=API_PLANNER_TOOL_DESCRIPTION.format(plugins["name"], plugins["description"]),
         coroutine=chain.arun,
         func=chain.run
     )
@@ -132,10 +133,10 @@ def _create_api_planner_tool(
 
 
 def _create_api_controller_agent(
-    api_url: str,
-    api_docs: str,
-    requests_wrapper: RequestsWrapper,
-    llm: BaseLanguageModel,
+        api_url: str,
+        api_docs: str,
+        requests_wrapper: RequestsWrapper,
+        llm: BaseLanguageModel,
 ) -> AgentExecutor:
     tools: List[BaseTool] = [
         RequestsGetToolWithParsing(requests_wrapper=requests_wrapper),
@@ -161,9 +162,10 @@ def _create_api_controller_agent(
 
 
 def _create_api_controller_tool(
-    api_spec: ReducedOpenAPISpec,
-    requests_wrapper: RequestsWrapper,
-    llm: BaseLanguageModel,
+        api_spec: ReducedOpenAPISpec,
+        requests_wrapper: RequestsWrapper,
+        llm: BaseLanguageModel,
+        plugin: Optional[dict]
 ) -> Tool:
     """Expose controller as a tool.
 
@@ -250,17 +252,17 @@ def _create_api_controller_tool(
         return await agent.arun(plan_str)
 
     return Tool(
-        name=api_spec.name+" "+API_CONTROLLER_TOOL_NAME,
+        name=plugin["name"] + " " + API_CONTROLLER_TOOL_NAME,
         coroutine=_acreate_and_run_api_controller_agent,
-        description=API_CONTROLLER_TOOL_DESCRIPTION.format(api_spec.name),
+        description=API_CONTROLLER_TOOL_DESCRIPTION.format(plugin["name"]),
         func=_create_and_run_api_controller_agent
     )
 
 
 def create_openapi_agent(
-    api_spec: ReducedOpenAPISpec,
-    requests_wrapper: RequestsWrapper,
-    llm: BaseLanguageModel,
+        api_spec: ReducedOpenAPISpec,
+        requests_wrapper: RequestsWrapper,
+        llm: BaseLanguageModel,
 ) -> AgentExecutor:
     """Instantiate API planner and controller for a given spec.
 
@@ -292,9 +294,10 @@ def create_openapi_agent(
 
 
 def create_openapi_agent_by_list(
-    api_specs: List[ReducedOpenAPISpec],
-    requests_wrapper: RequestsWrapper,
-    llm: BaseLanguageModel,
+        api_specs: List[ReducedOpenAPISpec],
+        requests_wrapper: RequestsWrapper,
+        llm: BaseLanguageModel,
+        plugins: List[dict]
 ) -> AgentExecutor:
     """Instantiate API planner and controller for a given spec.
 
@@ -305,9 +308,9 @@ def create_openapi_agent_by_list(
     that invokes a controller with its plan. This is to keep the planner simple.
     """
     tools = []
-    for api_spec in api_specs:
-        tools.append(_create_api_planner_tool(api_spec, llm))
-        tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm))
+    for index, api_spec in enumerate(api_specs):
+        tools.append(_create_api_planner_tool(api_spec, llm, plugins[index]))
+        tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm, plugins[index]))
 
     prompt = PromptTemplate(
         template=API_ORCHESTRATOR_PROMPT,
