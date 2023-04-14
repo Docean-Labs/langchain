@@ -5,7 +5,6 @@ from langchain.prompts.prompt import PromptTemplate
 
 API_PLANNER_PROMPT = """You are a planner that plans a sequence of API calls to assist with user queries against an API.
 
-<<<<<<< HEAD
 There are two rules you must follow:
 1) evaluate whether the user query can be solved by the API documented below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
 2) your "Plan" must be only belongs to one of all endpoints given.
@@ -13,61 +12,24 @@ There are two rules you must follow:
 You must only use API endpoints documented below ("Endpoints you can use:").
 Some user queries may be resolved in a single API call, but some will require several API calls.
 Your "Plan" will be passed to an API controller that can format it into web requests and return the responses.
-=======
-You should:
-1) evaluate whether the user query can be solved by the API documentated below. If no, say why.
-2) if yes, generate a plan of API calls and say what they are doing step by step.
-3) If the plan includes a DELETE call, you should always return an ask from the User for authorization first unless the User has specifically asked to delete something.
 
-You should only use API endpoints documented below ("Endpoints you can use:").
-You can only use the DELETE tool if the User has specifically asked to delete something. Otherwise, you should return a request authorization from the User first.
-Some user queries can be resolved in a single API call, but some will require several API calls.
-The plan will be passed to an API controller that can format it into web requests and return the responses.
->>>>>>> 6be5d7c6129e1ba126798850720084c18b594e10
 
 ----
 
 Here are some examples:
 
-<<<<<<< HEAD
-Fake Endpoints are as followed:
-GET /products/search | To search across products
-=======
+
 Fake endpoints for examples:
 GET /user to get information about the current user
 GET /products/search search across products
-POST /users/{{id}}/cart to add products to a user's cart
-PATCH /users/{{id}}/cart to update a user's cart
-DELETE /users/{{id}}/cart to delete a user's cart
->>>>>>> 6be5d7c6129e1ba126798850720084c18b594e10
 
 User query: tell me a joke
 Plan: Sorry, this API's domain is shopping, not comedy.
 
 Usery query: I want to buy a couch
-<<<<<<< HEAD
 Plan: 
 1. GET /products/search | To search across products, contains your couch.
-=======
-Plan: 1. GET /products with a query param to search for couches
-2. GET /user to find the user's id
-3. POST /users/{{id}}/cart to add a couch to the user's cart
->>>>>>> 6be5d7c6129e1ba126798850720084c18b594e10
 
-User query: I want to add a lamp to my cart
-Plan: 1. GET /products with a query param to search for lamps
-2. GET /user to find the user's id
-3. PATCH /users/{{id}}/cart to add a lamp to the user's cart
-
-User query: I want to delete my cart
-Plan: 1. GET /user to find the user's id
-2. DELETE required. Did user specify DELETE or previously authorize? Yes, proceed.
-3. DELETE /users/{{id}}/cart to delete the user's cart
-
-User query: I want to start a new cart
-Plan: 1. GET /user to find the user's id
-2. DELETE required. Did user specify DELETE or previously authorize? No, ask for authorization.
-3. Are you sure you want to delete your cart? 
 ----
 
 Here are endpoints you can use. Do not reference any of the endpoints above.
@@ -75,8 +37,9 @@ Here are endpoints you can use. Do not reference any of the endpoints above.
 {endpoints}
 
 ----
-Notice: 
-Your "Plan" must be one of the endpoints given above, not any other statement.
+NOTICE: 
+1. Your "Plan" must be one of the endpoints given above, not any other statement.
+2. When your Plan is completed, you should generate an output suffix and separate it with a new line.
 ---
 
 Begin:
@@ -112,7 +75,7 @@ Observation: the output of the action
 Thought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)
 Final Answer: the final output from executing the plan or missing information I'd need to re-plan correctly.
 
-
+HINT: When your Action Input is completed, you should generate an output suffix and separate it with a new line.
 Begin!
 
 Plan: {input}
@@ -147,40 +110,27 @@ Thought: I am finished executing a plan and have the information the user asked 
 Final Answer: the final output from executing the plan.
 
 
-Example:
-<<<<<<< HEAD
+Examples as follows:
 Here are the tools to plan and execute API requests: 
-Shopping Plugin api_planner: Can be used to generate the right API calls from Shopping Plugin Endpoints to assist with a user query, like Shopping Plugin api_planner(query) . Should always be called before trying to calling the Shopping Plugin api_controller. There is the description of the Shopping Plugin: online Shopping.
-Shopping Plugin api_controller: Can be used to execute a plan of API calls, like Shopping Plugin api_controller(plan)."
-Game API Plugin api_planner: Can be used to generate the right API calls from Game API Plugin Endpoints to assist with a user query, like Game API Plugin api_planner(query) . Should always be called before trying to calling the Game API Plugin api_controller. There is the description of the Game API Plugin: searching Games and supply games introduction.
-Game API Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
+Shopping api_planner: Can be used to generate the right API calls from Shopping Plugin Endpoints to assist with a user query, like Shopping Plugin api_planner(query) . Should always be called before trying to calling the Shopping Plugin api_controller. There is the description of the Shopping Plugin: online Shopping.
+Shopping api_controller: Can be used to execute a plan of API calls, like Shopping Plugin api_controller(plan)."
+Game Plugin api_planner: Can be used to generate the right API calls from Game API Plugin Endpoints to assist with a user query, like Game API Plugin api_planner(query) . Should always be called before trying to calling the Game API Plugin api_controller. There is the description of the Game API Plugin: searching Games and supply games introduction.
+Game Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
 
 
 User query: can you add five adidas bags to my shopping cart.
 Thought: I should select a suitable planner tool for Action and plan API calls first.
-Action:Shopping Plugin api_planner
+Action:Shopping api_planner
 Action Input: "Based on my in-depth understanding of the Shopping Plugin, it does not support adding to cart or other functions that require more privacy. Therefore, I can only assist you by calling the appropriate API to help you find five related products of adidas bags."
 Observation: 1) GET /shop/products | To get any products 
 Thought: I'm ready to execute the API calls.
-Action:Shopping Plugin api_controller
+Action:Shopping api_controller
 Action Input: 1) GET /shop/products | To get any products
-=======
-User query: can you add some trendy stuff to my shopping cart.
-Thought: I should plan API calls first.
-Action: api_planner
-Action Input: I need to find the right API calls to add trendy items to the users shopping cart
-Observation: 1) GET /items with params 'trending' is 'True' to get trending item ids
-2) GET /user to get user
-3) POST /cart to post the trending items to the user's cart
-Thought: I'm ready to execute the API calls.
-Action: api_controller
-Action Input: 1) GET /items params 'trending' is 'True' to get trending item ids
-2) GET /user to get user
-3) POST /cart to post the trending items to the user's cart
->>>>>>> 6be5d7c6129e1ba126798850720084c18b594e10
+
 ...
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
+2. When your Plan is completed, you should generate an output suffix and separate it with a new line.
 ---
 
 Begin!

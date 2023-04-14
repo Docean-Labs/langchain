@@ -67,16 +67,6 @@ class RequestsGetToolWithParsing(BaseRequestsTool, BaseTool):
 
     async def _arun(self, text: str) -> str:
         return self._run(text)
-        # raise NotImplementedError()
-        # try:
-        #     data = json.loads(text)
-        # except json.JSONDecodeError as e:
-        #     raise e
-        # response = await self.requests_wrapper.aget(data["url"])
-        # response = response[: self.response_length]
-        # return await self.llm_chain.apredict(
-        #     response=response, instructions=data["output_instructions"]
-        # )
 
 
 class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
@@ -102,16 +92,6 @@ class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
 
     async def _arun(self, text: str) -> str:
         return self._run(text)
-        # raise NotImplementedError()
-        # try:
-        #     data = json.loads(text)
-        # except json.JSONDecodeError as e:
-        #     raise e
-        # response = await self.requests_wrapper.apost(data["url"], data["data"])
-        # response = response[: self.response_length]
-        # return await self.llm_chain.apredict(
-        #     response=response, instructions=data["output_instructions"]
-        # )
 
 
 class RequestsPatchToolWithParsing(BaseRequestsTool, BaseTool):
@@ -136,7 +116,7 @@ class RequestsPatchToolWithParsing(BaseRequestsTool, BaseTool):
         ).strip()
 
     async def _arun(self, text: str) -> str:
-        raise NotImplementedError()
+        return self._run(text)
 
 
 class RequestsDeleteToolWithParsing(BaseRequestsTool, BaseTool):
@@ -161,7 +141,7 @@ class RequestsDeleteToolWithParsing(BaseRequestsTool, BaseTool):
         ).strip()
 
     async def _arun(self, text: str) -> str:
-        raise NotImplementedError()
+        return self._run(text)
 
 
 #
@@ -197,6 +177,8 @@ def _create_api_controller_agent(
     tools: List[BaseTool] = [
         RequestsGetToolWithParsing(requests_wrapper=requests_wrapper),
         RequestsPostToolWithParsing(requests_wrapper=requests_wrapper),
+        RequestsPatchToolWithParsing(requests_wrapper=requests_wrapper),
+        RequestsDeleteToolWithParsing(requests_wrapper=requests_wrapper)
     ]
     prompt = PromptTemplate(
         template=API_CONTROLLER_PROMPT,
