@@ -112,7 +112,7 @@ class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
 # Orchestrator, planner, controller.
 #
 def _create_api_planner_tool(
-        api_spec: ReducedOpenAPISpec, llm: BaseLanguageModel, plugins: Optional[dict]
+        api_spec: ReducedOpenAPISpec, llm: BaseLanguageModel, plugin: Optional[dict]
 ) -> Tool:
     endpoint_descriptions = [
         f"{name} {description}" for name, description, _ in api_spec.endpoints
@@ -124,8 +124,8 @@ def _create_api_planner_tool(
     )
     chain = LLMChain(llm=llm, prompt=prompt)
     tool = Tool(
-        name=plugins["name"] + " " + API_PLANNER_TOOL_NAME,
-        description=API_PLANNER_TOOL_DESCRIPTION.format(plugins["name"], plugins["description"]),
+        name=plugin["name"] + " " + API_PLANNER_TOOL_NAME,
+        description=API_PLANNER_TOOL_DESCRIPTION.format(plugin["name"], plugin["description"]),
         coroutine=chain.arun,
         func=chain.run
     )
@@ -299,19 +299,11 @@ def create_openapi_agent_by_list(
         llm: BaseLanguageModel,
         plugins: List[dict]
 ) -> AgentExecutor:
-    """Instantiate API planner and controller for a given spec.
-
-    Inject credentials via requests_wrapper.
-
-    We use a top-level "orchestrator" agent to invoke the planner and controller,
-    rather than a top-level planner
-    that invokes a controller with its plan. This is to keep the planner simple.
-    """
     tools = []
     for index, api_spec in enumerate(api_specs):
         tools.append(_create_api_planner_tool(api_spec, llm, plugins[index]))
         tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm, plugins[index]))
-
+    tools.append(get_gpt_tool(llm))
     prompt = PromptTemplate(
         template=API_ORCHESTRATOR_PROMPT,
         input_variables=["input", "agent_scratchpad"],
@@ -327,3 +319,18 @@ def create_openapi_agent_by_list(
         allowed_tools=[tool.name for tool in tools],
     )
     return AgentExecutor.from_agent_and_tools(agent=agent, tools=tools, verbose=True)
+
+
+def get_gpt_tool(llm):
+    prompt = PromptTemplate(
+        template="help user to answer question\n{query}",
+        input_variables=["query"],
+    )
+    chain = LLMChain(llm=llm, prompt=prompt)
+    tool = Tool(
+        name=llm.model_name,
+        description="if all other tools can not answer user's question, gpt will help user to answer question",
+        coroutine=chain.arun,
+        func=chain.run
+    )
+    return tool
