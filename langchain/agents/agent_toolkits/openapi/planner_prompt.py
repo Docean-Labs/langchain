@@ -39,7 +39,6 @@ Here are endpoints you can use. Do not reference any of the endpoints above.
 ----
 NOTICE: 
 1. Your "Plan" must be one of the endpoints given above, not any other statement.
-2. When your Plan is completed, you should generate an output suffix and separate it with a new line.
 ---
 
 Begin:
@@ -52,7 +51,7 @@ API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from
 
 # Execution.
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
-If you cannot complete them and run into issues, you should explain the issue. If you're able to resolve an API call, you can retry the API call. When interacting with API objects, you may extract ids for inputs to other API calls but ids and names for outputs returned to the User.
+If you cannot complete them and run into issues, you should explain the issue. If you're able to resolve an API call, you can retry the API call.
 
 
 Here is documentation on the API:
@@ -67,19 +66,18 @@ Here are tools to execute requests against the API: {tool_descriptions}
 Starting below, you should follow this format:
 
 Plan: the plan of API calls to execute
-Thought: you should always think about what to do
+Thought: Output: you should always think about what to do
 Action: select the most suitable tool from [{tool_names}]
 Action Input: the input to the action
-Observation: the output of the action
+Observation: process: the output of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
-Thought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)
+Thought: Output: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)
 Final Answer: the final output from executing the plan or missing information I'd need to re-plan correctly.
 
-HINT: When your Action Input is completed, you should generate an output suffix and separate it with a new line.
 Begin!
 
 Plan: {input}
-Thought:
+Thought: Output: 
 {agent_scratchpad}
 """
 API_CONTROLLER_TOOL_NAME = "api_controller"
@@ -101,42 +99,39 @@ Here are the tools to plan and execute API requests:
 Starting below, you should follow this format:
 
 User query: the query a User wants help with related to the API.
-Thought: you should always think about what to do.
+Thought: Output: you should always think about what to do.
 Action: select a tool which must be only one of the tools [{tool_names}].
 Action Input: the input to the tool fo the above Action.
 Observation: the result of the Action within Action Input.
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)
-Thought: I am finished executing a plan and have the information the user asked for or the data the used asked to create.
+Thought: Output: I am finished executing a plan and have the information the user asked for or the data the used asked to create.
 Final Answer: the final output from executing the plan.
 
 
 Examples as follows:
 Here are the tools to plan and execute API requests: 
-Shopping api_planner: Can be used to generate the right API calls from Shopping Plugin Endpoints to assist with a user query, like Shopping Plugin api_planner(query) . Should always be called before trying to calling the Shopping Plugin api_controller. There is the description of the Shopping Plugin: online Shopping.
-Shopping api_controller: Can be used to execute a plan of API calls, like Shopping Plugin api_controller(plan)."
 Game Plugin api_planner: Can be used to generate the right API calls from Game API Plugin Endpoints to assist with a user query, like Game API Plugin api_planner(query) . Should always be called before trying to calling the Game API Plugin api_controller. There is the description of the Game API Plugin: searching Games and supply games introduction.
 Game Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
 
 
-User query: can you add five adidas bags to my shopping cart.
-Thought: I should select a suitable planner tool for Action and plan API calls first.
-Action:Shopping api_planner
-Action Input: "Based on my in-depth understanding of the Shopping Plugin, it does not support adding to cart or other functions that require more privacy. Therefore, I can only assist you by calling the appropriate API to help you find five related products of adidas bags."
-Observation: 1) GET /shop/products | To get any products 
-Thought: I'm ready to execute the API calls.
-Action:Shopping api_controller
-Action Input: 1) GET /shop/products | To get any products
+User query: can you suggest me five popular games for me.
+Thought: Output: I should select a suitable api_planner tool for Action and plan API calls first.
+Action:Game Plugin api_planner
+Action Input: search five popular games
+Observation: 1) GET /game/search | To get some introduction of games 
+Thought: Output: I'm ready to execute the API calls.
+Action:Game Plugin api_controller
+Action Input: 1) GET /game/search | To get some introduction of games 
 
 ...
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
-2. When your Plan is completed, you should generate an output suffix and separate it with a new line.
 ---
 
 Begin!
 
 User query: {input}
-Thought: I should generate a plan to help with this query and then copy that plan exactly to the controller.
+Thought: Output: I should generate a plan to help with this query and then copy that plan exactly to the controller.
 {agent_scratchpad}"""
 
 REQUESTS_GET_TOOL_DESCRIPTION = """Use this to GET content from a website.
