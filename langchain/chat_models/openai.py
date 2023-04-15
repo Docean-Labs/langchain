@@ -256,7 +256,7 @@ class ChatOpenAI(BaseChatModel):
                 token = stream_resp["choices"][0]["delta"].get("content", "")
                 inner_completion += token
                 self.callback_manager.on_llm_new_token(
-                    token,
+                    stream_resp,
                     verbose=self.verbose,
                 )
             message = _convert_dict_to_message(
@@ -302,7 +302,7 @@ class ChatOpenAI(BaseChatModel):
                 inner_completion += token
                 if self.callback_manager.is_async:
                     await self.callback_manager.on_llm_new_token(
-                        token,
+                        stream_resp,
                         verbose=self.verbose,
                     )
                 else:
