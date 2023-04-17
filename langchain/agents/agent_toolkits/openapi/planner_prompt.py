@@ -70,7 +70,7 @@ Starting below, you should follow this format:
 Plan: the plan of API calls to execute  \n
 Thought:  \nOutput: you should always think about what to do  \n
 Action: select the most suitable tool from [{tool_names}]  \n
-Action Input: the input to the action  \n
+Action Input: the input to the action(If this is a JSON data, then output it all in one line without line breaks.)  \n
 Observation: process: the output of the action  \n
 ... (this Thought/Action/Action Input/Observation can repeat N times)  \n
 Thought:  \nOutput: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
@@ -105,7 +105,7 @@ Starting below, you should follow this format:
 User query: the query a User wants help with related to the API.  \n
 Thought:  \nOutput: you should always think about what to do.  \n
 Action: select a tool which must be only one of the tools [{tool_names}].  \n
-Action Input: the input to the tool fo the above Action.  \n
+Action Input: the input to the tool fo the above Action.(If this is a JSON data, then output it all in one line without line breaks.)  \n
 Observation: the result of the Action within Action Input.  \n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)  \n
 Thought:  \nOutput: I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
@@ -121,7 +121,7 @@ Game Plugin api_controller: Can be used to execute a plan of API calls, like Gam
 User query: can you suggest me five popular games for me.  \n
 Thought:  \nOutput: I should select a suitable api_planner tool for Action and plan API calls first.  \n
 Action:Game Plugin api_planner  \n
-Action Input: search five popular games  \n
+Action Input: search five popular games(If this is a JSON data, then output it all in one line without line breaks.)  \n
 Observation:   \n
 1) GET /game/search | To get some introduction of games   \n
 Thought:  \nOutput: I'm ready to execute the API calls.  \n
@@ -143,6 +143,7 @@ Thought:   \nOutput: I should generate a plan to help with this query and then c
 
 REQUESTS_GET_TOOL_DESCRIPTION = """Use this to GET content from a website.
 Input to the tool should be a json string with 3 keys: "url", "params" and "output_instructions".
+This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string. 
 The value of "params" should be a dict of the needed and available parameters from the OpenAPI spec related to the endpoint. 
 If parameters are not needed, or not available, leave it empty.
@@ -162,6 +163,7 @@ Output:""",
 
 REQUESTS_POST_TOOL_DESCRIPTION = """Use this when you want to POST to a website.
 Input to the tool should be a json string with 3 keys: "url", "data", and "output_instructions".
+This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string.
 The value of "data" should be a dictionary of key-value pairs you want to POST to the url.
 The value of "output_instructions" should be instructions on what information to extract from the response, for example the id(s) for a resource(s) that the POST request creates.
@@ -179,6 +181,7 @@ Output:""",
 
 REQUESTS_PATCH_TOOL_DESCRIPTION = """Use this when you want to PATCH content on a website.
 Input to the tool should be a json string with 3 keys: "url", "data", and "output_instructions".
+This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string.
 The value of "data" should be a dictionary of key-value pairs of the body params available in the OpenAPI spec you want to PATCH the content with at the url.
 The value of "output_instructions" should be instructions on what information to extract from the response, for example the id(s) for a resource(s) that the PATCH request creates.
@@ -196,6 +199,7 @@ Output:""",
 
 REQUESTS_DELETE_TOOL_DESCRIPTION = """ONLY USE THIS TOOL WHEN THE USER HAS SPECIFICALLY REQUESTED TO DELETE CONTENT FROM A WEBSITE.
 Input to the tool should be a json string with 2 keys: "url", and "output_instructions".
+This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string.
 The value of "output_instructions" should be instructions on what information to extract from the response, for example the id(s) for a resource(s) that the DELETE request creates.
 Always use double quotes for strings in the json string.

@@ -21,4 +21,4 @@ class MRKLOutputParser(AgentOutputParser):
             action_input = match.group(2)
             return AgentAction(action, action_input.strip(" ").strip('"'), text)
         else:
-            return AgentAction("gpt-4", text, text)
+            return AgentAction("gpt-3.5-turbo", text, text)
