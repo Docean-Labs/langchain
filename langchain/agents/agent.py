@@ -32,7 +32,7 @@ from langchain.schema import (
 from langchain.tools.base import BaseTool
 from langchain.utilities.asyncio import asyncio_timeout
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class BaseSingleActionAgent(BaseModel):
@@ -338,6 +338,7 @@ class Agent(BaseSingleActionAgent):
     """
 
     llm_chain: LLMChain
+    output_parser: AgentOutputParser
     allowed_tools: Optional[List[str]] = None
 
     def get_allowed_tools(self) -> Optional[List[str]]:
@@ -346,10 +347,6 @@ class Agent(BaseSingleActionAgent):
     @property
     def return_values(self) -> List[str]:
         return ["output"]
-
-    @abstractmethod
-    def _extract_tool_and_input(self, text: str):
-        """Extract tool and tool input from llm output."""
 
     def _fix_text(self, text: str) -> str:
         """Fix the text."""
@@ -372,67 +369,6 @@ class Agent(BaseSingleActionAgent):
             thoughts += f"\n{self.observation_prefix}{observation}\n{self.llm_prefix}"
         return thoughts
 
-    def _prep_action(self):
-        query = "I have the following tools: [{0}]. Sentence: {1}. " \
-                "Please choose the most suitable tool and only output the name of the tool. " \
-                "Do not output any additional information"
-        question = self.llm_chain.textbuffer[0]["inputs"]["input"]
-        openai.api_key = os.environ.get("OPENAI_API_KEY")
-        gen_answer = openai.ChatCompletion.create(
-            messages=[{"role": "user", "content": query.format(self.allowed_tools, question)}],
-            model="gpt-3.5-turbo-0301"
-        )
-        gen_action = gen_answer["choices"][0]["message"]['content']
-        if gen_action not in self.allowed_tools:
-            return True, (self.allowed_tools[0], question)
-        else:
-            return True, (gen_action, question)
-
-    def _get_next_action(self, full_inputs: Dict[str, str]) -> AgentAction:
-        full_output = self.llm_chain.predict(**full_inputs) + "\n"
-        parsed_output = self._extract_tool_and_input(full_output)
-        max_iterations = 2
-
-        while parsed_output is None or not parsed_output[0]:
-            # Exceeds three attempts and is still unsuccessful, use the original OpenAI-generated Action
-            if max_iterations == 0:
-                # parsed_output = self._prep_action()
-                # full_output += full_inputs['input']+"\nAction: " + parsed_output[1][0]+"\nAction Input: " + parsed_output[1][1]
-                break
-
-            # full_output = self._fix_text(full_output)
-            full_inputs["agent_scratchpad"] += full_output
-
-            output = self.llm_chain.predict(**full_inputs)
-            parsed_output = self._extract_tool_and_input(full_output)
-            full_output += output
-            # if parsed_output[1][0] in self.allowed_tools:
-            #     full_output += output
-            #     break
-            max_iterations -= 1
-
-        return AgentAction(
-            tool=parsed_output[1][0], tool_input=parsed_output[1][1], log=full_output
-        )
-
-    async def _aget_next_action(self, full_inputs: Dict[str, str]) -> AgentAction:
-        full_output = await self.llm_chain.apredict(**full_inputs) + "\n"
-        parsed_output = self._extract_tool_and_input(full_output)
-        max_iterations = 2
-        while parsed_output is None or not parsed_output[0]:
-            # Exceeds three attempts and is still unsuccessful, use the original OpenAI-generated Action
-            if max_iterations == 0:
-                break
-            full_output = self._fix_text(full_output)
-            full_inputs["agent_scratchpad"] += full_output
-            output = await self.llm_chain.apredict(**full_inputs)
-            full_output += output
-            parsed_output = self._extract_tool_and_input(full_output)
-            max_iterations -= 1
-        return AgentAction(
-            tool=parsed_output[1][0], tool_input=parsed_output[1][1], log=full_output
-        )
-
     def plan(
         self, intermediate_steps: List[Tuple[AgentAction, str]], **kwargs: Any
     ) -> Union[AgentAction, AgentFinish]:
@@ -447,11 +383,8 @@ class Agent(BaseSingleActionAgent):
             Action specifying what tool to use.
         """
         full_inputs = self.get_full_inputs(intermediate_steps, **kwargs)
-
-        action = self._get_next_action(full_inputs)
-        if action.tool == self.finish_tool_name:
-            return AgentFinish({"output": action.tool_input}, action.log)
-        return action
+        full_output = self.llm_chain.predict(**full_inputs)
+        return self.output_parser.parse(full_output)
 
     async def aplan(
         self, intermediate_steps: List[Tuple[AgentAction, str]], **kwargs: Any
@@ -467,10 +400,8 @@ class Agent(BaseSingleActionAgent):
             Action specifying what tool to use.
         """
         full_inputs = self.get_full_inputs(intermediate_steps, **kwargs)
-        action = await self._aget_next_action(full_inputs)
-        if action.tool == self.finish_tool_name:
-            return AgentFinish({"output": action.tool_input}, action.log)
-        return action
+        full_output = await self.llm_chain.apredict(**full_inputs)
+        return self.output_parser.parse(full_output)
 
     def get_full_inputs(
         self, intermediate_steps: List[Tuple[AgentAction, str]], **kwargs: Any
@@ -480,11 +411,6 @@ class Agent(BaseSingleActionAgent):
         new_inputs = {"agent_scratchpad": thoughts, "stop": self._stop}
         full_inputs = {**kwargs, **new_inputs}
         return full_inputs
-
-    @property
-    def finish_tool_name(self) -> str:
-        """Name of the tool to use to finish the chain."""
-        return "Final Answer"
 
     @property
     def input_keys(self) -> List[str]:
@@ -533,11 +459,17 @@ class Agent(BaseSingleActionAgent):
         pass
 
     @classmethod
+    @abstractmethod
+    def _get_default_output_parser(cls, **kwargs: Any) -> AgentOutputParser:
+        """Get default output parser for this class."""
+
+    @classmethod
     def from_llm_and_tools(
         cls,
         llm: BaseLanguageModel,
         tools: Sequence[BaseTool],
         callback_manager: Optional[BaseCallbackManager] = None,
+        output_parser: Optional[AgentOutputParser] = None,
         **kwargs: Any,
     ) -> Agent:
         """Construct an agent from an LLM and tools."""
@@ -548,7 +480,13 @@ class Agent(BaseSingleActionAgent):
             callback_manager=callback_manager,
         )
         tool_names = [tool.name for tool in tools]
-        return cls(llm_chain=llm_chain, allowed_tools=tool_names, **kwargs)
+        _output_parser = output_parser or cls._get_default_output_parser()
+        return cls(
+            llm_chain=llm_chain,
+            allowed_tools=tool_names,
+            output_parser=_output_parser,
+            **kwargs,
+        )
 
     def return_stopped_response(
         self,
@@ -578,14 +516,10 @@ class Agent(BaseSingleActionAgent):
             full_inputs = {**kwargs, **new_inputs}
             full_output = self.llm_chain.predict(**full_inputs)
             # We try to extract a final answer
-            parsed_output = self._extract_tool_and_input(full_output)
-            if parsed_output is None:
-                # If we cannot extract, we just return the full output
-                return AgentFinish({"output": full_output}, full_output)
-            tool, tool_input = parsed_output
-            if tool == self.finish_tool_name:
+            parsed_output = self.output_parser.parse(full_output)
+            if isinstance(parsed_output, AgentFinish):
                 # If we can extract, we send the correct stuff
-                return AgentFinish({"output": tool_input}, full_output)
+                return parsed_output
             else:
                 # If we can extract, but the tool is not the final tool,
                 # we just return the full output
