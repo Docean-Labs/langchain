@@ -70,7 +70,7 @@ Thought: Output: you should always think about what to do\n
 Action: select the most suitable tool from [{tool_names}]\n
 Action Input: the input to the action\n
 Observation: process: the output of the action\n
-... (this Thought/Action/Action Input/Observation can repeat N times)
+... (this Thought/Action/Action Input/Observation can repeat N times)\n
 Thought: Output: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)\n
 Final Answer: the final output from executing the plan or missing information I'd need to re-plan correctly.\n
 
@@ -104,7 +104,7 @@ Thought: Output: you should always think about what to do.\n
 Action: select a tool which must be only one of the tools [{tool_names}].\n
 Action Input: the input to the tool fo the above Action.\n
 Observation: the result of the Action within Action Input.\n
-... (this Thought/Action/Action Input/Observation can repeat at most N times)
+... (this Thought/Action/Action Input/Observation can repeat at most N times)\n
 Thought: Output: I am finished executing a plan and have the information the user asked for or the data the used asked to create.\n
 Final Answer: the final output from executing the plan.\n
 
@@ -115,14 +115,16 @@ Game Plugin api_planner: Can be used to generate the right API calls from Game A
 Game Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
 
 
-User query: can you suggest me five popular games for me.
-Thought: Output: I should select a suitable api_planner tool for Action and plan API calls first.
-Action:Game Plugin api_planner
-Action Input: search five popular games
-Observation: 1) GET /game/search | To get some introduction of games 
-Thought: Output: I'm ready to execute the API calls.
-Action:Game Plugin api_controller
-Action Input: 1) GET /game/search | To get some introduction of games 
+User query: can you suggest me five popular games for me.\n
+Thought: Output: I should select a suitable api_planner tool for Action and plan API calls first.\n
+Action:Game Plugin api_planner\n
+Action Input: search five popular games\n
+Observation: \n
+1) GET /game/search | To get some introduction of games \n
+Thought: Output: I'm ready to execute the API calls.\n
+Action:Game Plugin api_controller\n
+Action Input: 1) GET /game/search | To get some introduction of games \n
+\n
 
 ...
 NOTICE: 
