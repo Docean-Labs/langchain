@@ -51,7 +51,7 @@ API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from
 
 # Execution.
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
-If you cannot complete them and run into issues, you should explain the issue. If you're able to resolve an API call, you can retry the API call.
+If you cannot complete them and run into issues, you should explain the issue. If the API endpoint belongs to follow Endpoints, you can retry the API call, else stop retry.
 
 
 Here is documentation on the API:
