@@ -9,6 +9,7 @@ There are two rules you must follow:
 1) evaluate whether the user query can be solved by the API documented below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
 2) your "Plan" must be only belongs to one of all endpoints given.
 
+
 You must only use API endpoints documented below ("Endpoints you can use:").
 Some user queries may be resolved in a single API call, but some will require several API calls.
 Your "Plan" will be passed to an API controller that can format it into web requests and return the responses.
@@ -23,12 +24,11 @@ Fake endpoints for examples:
 GET /user to get information about the current user
 GET /products/search search across products
 
-User query: tell me a joke
-Plan: Sorry, this API's domain is shopping, not comedy.
+User query: tell me a joke\n
+Plan: Sorry, this API's domain is shopping, not comedy.\n
 
-Usery query: I want to buy a couch
-Plan: 
-1. GET /products/search | To search across products, contains your couch.
+Usery query: I want to buy a couch\n
+Plan: 1. GET /products/search | To search across products, contains your couch.\n
 
 ----
 
@@ -65,15 +65,16 @@ Here are tools to execute requests against the API: {tool_descriptions}
 
 Starting below, you should follow this format:
 
-Plan: the plan of API calls to execute
-Thought: Output: you should always think about what to do
-Action: select the most suitable tool from [{tool_names}]
-Action Input: the input to the action
-Observation: process: the output of the action
+Plan: the plan of API calls to execute\n
+Thought: Output: you should always think about what to do\n
+Action: select the most suitable tool from [{tool_names}]\n
+Action Input: the input to the action\n
+Observation: process: the output of the action\n
 ... (this Thought/Action/Action Input/Observation can repeat N times)
-Thought: Output: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)
-Final Answer: the final output from executing the plan or missing information I'd need to re-plan correctly.
+Thought: Output: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)\n
+Final Answer: the final output from executing the plan or missing information I'd need to re-plan correctly.\n
 
+Notice: You need to add a new line before each action (Action/Action Input/Thought/Observation/Output/Final Answer, etc.) you take.
 Begin!
 
 Plan: {input}
@@ -98,14 +99,14 @@ Here are the tools to plan and execute API requests:
 
 Starting below, you should follow this format:
 
-User query: the query a User wants help with related to the API.
-Thought: Output: you should always think about what to do.
-Action: select a tool which must be only one of the tools [{tool_names}].
-Action Input: the input to the tool fo the above Action.
-Observation: the result of the Action within Action Input.
+User query: the query a User wants help with related to the API.\n
+Thought: Output: you should always think about what to do.\n
+Action: select a tool which must be only one of the tools [{tool_names}].\n
+Action Input: the input to the tool fo the above Action.\n
+Observation: the result of the Action within Action Input.\n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)
-Thought: Output: I am finished executing a plan and have the information the user asked for or the data the used asked to create.
-Final Answer: the final output from executing the plan.
+Thought: Output: I am finished executing a plan and have the information the user asked for or the data the used asked to create.\n
+Final Answer: the final output from executing the plan.\n
 
 
 Examples as follows:
@@ -126,6 +127,7 @@ Action Input: 1) GET /game/search | To get some introduction of games
 ...
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
+2. You need to add a new line before each action (Action/Action Input/Thought/Observation/Output/Final Answer, etc.) you take.
 ---
 
 Begin!
