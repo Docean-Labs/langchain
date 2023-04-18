@@ -31,6 +31,7 @@ Plan: Sorry, this API's domain is shopping, not comedy.  \n
 Usery query: I want to buy a couch  \n
 Plan: 1. GET /products/search | To search across products, contains your couch.  \n
 
+  \n
 ----
 
 Here are endpoints you can use. Do not reference any of the endpoints above.
@@ -68,19 +69,19 @@ Here are tools to execute requests against the API: {tool_descriptions}
 Starting below, you should follow this format:
 
 Plan: the plan of API calls to execute  \n
-Thought:  \nOutput: you should always think about what to do  \n
+  \nThought:  \nOutput: you should always think about what to do  \n
 Action: select the most suitable tool from [{tool_names}]  \n
 Action Input: the input to the action(If this is a JSON data, then output it all in one line without line breaks.)  \n
 Observation: process: the output of the action  \n
 ... (this Thought/Action/Action Input/Observation can repeat N times)  \n
-Thought:  \nOutput: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
+  \nThought:  \nOutput: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
 Final Answer: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
 
 Notice: You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Output/Final Answer, etc.) you take.
 Begin!
 
 Plan: {input}
-Thought:  \nOutput: 
+  \nThought:  \nOutput: 
 {agent_scratchpad}
 """
 API_CONTROLLER_TOOL_NAME = "api_controller"
@@ -103,12 +104,12 @@ Here are the tools to plan and execute API requests:
 Starting below, you should follow this format:
 
 User query: the query a User wants help with related to the API.  \n
-Thought:  \nOutput: you should always think about what to do.  \n
+  \nThought:  \nOutput: you should always think about what to do.  \n
 Action: select a tool which must be only one of the tools [{tool_names}].  \n
 Action Input: the input to the tool fo the above Action.(If this is a JSON data, then output it all in one line without line breaks.)  \n
 Observation: the result of the Action within Action Input.  \n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)  \n
-Thought:  \nOutput: I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
+  \nThought:  \nOutput: I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
 Final Answer: the final output from executing the plan.  \n
 
 
@@ -119,12 +120,12 @@ Game Plugin api_controller: Can be used to execute a plan of API calls, like Gam
 
 
 User query: can you suggest me five popular games for me.  \n
-Thought:  \nOutput: I should select a suitable api_planner tool for Action and plan API calls first.  \n
+  \nThought:  \nOutput: I should select a suitable api_planner tool for Action and plan API calls first.  \n
 Action:Game Plugin api_planner  \n
 Action Input: search five popular games(If this is a JSON data, then output it all in one line without line breaks.)  \n
 Observation:   \n
 1) GET /game/search | To get some introduction of games   \n
-Thought:  \nOutput: I'm ready to execute the API calls.  \n
+  \nThought:  \nOutput: I'm ready to execute the API calls.  \n
 Action:Game Plugin api_controller  \n
 Action Input: 1) GET /game/search | To get some introduction of games   \n
 \n
@@ -138,7 +139,7 @@ NOTICE:
 Begin!
 
 User query: {input}
-Thought:   \nOutput: I should generate a plan to help with this query and then copy that plan exactly to the controller.
+  \nThought:   \nOutput: I should generate a plan to help with this query and then copy that plan exactly to the controller.
 {agent_scratchpad}"""
 
 REQUESTS_GET_TOOL_DESCRIPTION = """Use this to GET content from a website.

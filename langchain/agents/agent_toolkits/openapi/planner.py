@@ -368,7 +368,7 @@ def get_gpt_tool(llm):
     )
     chain = LLMChain(llm=llm, prompt=prompt)
     tool = Tool(
-        name=llm.model_name,
+        name="AnyGPT",
         description="if all other tools can not answer user's question, gpt will help user to answer question",
         coroutine=chain.arun,
         func=chain.run
