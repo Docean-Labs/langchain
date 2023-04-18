@@ -44,6 +44,24 @@ from langchain.tools.requests.tool import BaseRequestsTool
 MAX_RESPONSE_LENGTH = 5000
 
 
+def parse_json(data: str):
+    # 删除可能存在的json开头
+    if data.startswith("json"):
+        data = data.split("json", 1)[-1]
+    # 删除三引号
+    data = data.strip("'''")
+    # 去除多余的空白和换行
+    data = data.replace('\n', '').replace(' ', '')
+
+    # 解析JSON
+    try:
+        json_data = json.loads(data)
+    except json.JSONDecodeError as e:
+        print("解析失败:", e)
+        return None
+
+    return json_data
+
 class RequestsGetToolWithParsing(BaseRequestsTool, BaseTool):
     name = "requests_get"
     description = REQUESTS_GET_TOOL_DESCRIPTION
@@ -55,7 +73,7 @@ class RequestsGetToolWithParsing(BaseRequestsTool, BaseTool):
 
     def _run(self, text: str) -> str:
         try:
-            data = json.loads(text)
+            data = parse_json(text)
         except json.JSONDecodeError as e:
             raise e
         data_params = data.get("params")
@@ -81,7 +99,7 @@ class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
 
     def _run(self, text: str) -> str:
         try:
-            data = json.loads(text)
+            data = parse_json(text)
         except json.JSONDecodeError as e:
             raise e
         response = self.requests_wrapper.post(data["url"], data["data"])
@@ -106,7 +124,7 @@ class RequestsPatchToolWithParsing(BaseRequestsTool, BaseTool):
 
     def _run(self, text: str) -> str:
         try:
-            data = json.loads(text)
+            data = parse_json(text)
         except json.JSONDecodeError as e:
             raise e
         response = self.requests_wrapper.patch(data["url"], data["data"])
@@ -131,7 +149,7 @@ class RequestsDeleteToolWithParsing(BaseRequestsTool, BaseTool):
 
     def _run(self, text: str) -> str:
         try:
-            data = json.loads(text)
+            data = parse_json(text)
         except json.JSONDecodeError as e:
             raise e
         response = self.requests_wrapper.delete(data["url"])
