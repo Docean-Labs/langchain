@@ -21,7 +21,8 @@ class GoogleSearchRun(BaseTool):
 
     async def _arun(self, query: str) -> str:
         """Use the tool asynchronously."""
-        raise NotImplementedError("GoogleSearchRun does not support async")
+        return self._run(query)
+        # raise NotImplementedError("GoogleSearchRun does not support async")
 
 
 class GoogleSearchResults(BaseTool):
@@ -42,4 +43,5 @@ class GoogleSearchResults(BaseTool):
 
     async def _arun(self, query: str) -> str:
         """Use the tool asynchronously."""
-        raise NotImplementedError("GoogleSearchRun does not support async")
+        return self._run(query)
+        # raise NotImplementedError("GoogleSearchRun does not support async")
