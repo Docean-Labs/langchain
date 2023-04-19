@@ -337,13 +337,15 @@ def create_openapi_agent_by_list(
         api_specs: List[ReducedOpenAPISpec],
         requests_wrapper: RequestsWrapper,
         llm: BaseLanguageModel,
-        plugins: List[dict]
+        plugins: List[dict],
+        custom_tools: List[BaseTool]
 ) -> AgentExecutor:
     tools = []
     for index, api_spec in enumerate(api_specs):
         tools.append(_create_api_planner_tool(api_spec, llm, plugins[index]))
         tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm, plugins[index]))
     tools.append(get_gpt_tool(llm))
+    tools.extend(custom_tools)
     prompt = PromptTemplate(
         template=API_ORCHESTRATOR_PROMPT,
         input_variables=["input", "agent_scratchpad"],
