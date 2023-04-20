@@ -98,7 +98,7 @@ def reduce_openapi_spec(spec: dict, dereference: bool = True) -> ReducedOpenAPIS
                 for parameter in docs.get("parameters", [])
                 if parameter.get("required")
             ]
-        if "200" in docs["responses"]:
+        if docs.get("responses") and "200" in docs["responses"]:
             out["responses"] = docs["responses"]["200"]
         return out
 
