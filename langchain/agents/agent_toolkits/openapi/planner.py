@@ -44,6 +44,16 @@ from langchain.tools.requests.tool import BaseRequestsTool
 MAX_RESPONSE_LENGTH = 5000
 
 
+def parse_text(text):
+    text = text.strip("```json")
+    text = text.strip("```")
+    text = text.replace("```", "")
+    text = text.replace("\n", "")
+    text = text.replace("\t", "")
+    text = text.replace(" ", "")
+    return text
+
+
 class RequestsGetToolWithParsing(BaseRequestsTool, BaseTool):
     name = "requests_get"
     description = REQUESTS_GET_TOOL_DESCRIPTION
@@ -55,6 +65,7 @@ class RequestsGetToolWithParsing(BaseRequestsTool, BaseTool):
 
     def _run(self, text: str) -> str:
         try:
+            text = parse_text(text)
             data = json.loads(text)
         except json.JSONDecodeError as e:
             raise e
@@ -81,6 +92,7 @@ class RequestsPostToolWithParsing(BaseRequestsTool, BaseTool):
 
     def _run(self, text: str) -> str:
         try:
+            text = parse_text(text)
             data = json.loads(text)
         except json.JSONDecodeError as e:
             raise e
@@ -106,6 +118,7 @@ class RequestsPatchToolWithParsing(BaseRequestsTool, BaseTool):
 
     def _run(self, text: str) -> str:
         try:
+            text = parse_text(text)
             data = json.loads(text)
         except json.JSONDecodeError as e:
             raise e
@@ -131,6 +144,7 @@ class RequestsDeleteToolWithParsing(BaseRequestsTool, BaseTool):
 
     def _run(self, text: str) -> str:
         try:
+            text = parse_text(text)
             data = json.loads(text)
         except json.JSONDecodeError as e:
             raise e
