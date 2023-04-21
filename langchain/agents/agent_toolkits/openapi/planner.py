@@ -187,7 +187,9 @@ def _create_api_controller_agent(
         api_docs: str,
         requests_wrapper: RequestsWrapper,
         llm: BaseLanguageModel,
+        headers: dict
 ) -> AgentExecutor:
+    requests_wrapper.headers = headers
     tools: List[BaseTool] = [
         RequestsGetToolWithParsing(requests_wrapper=requests_wrapper),
         RequestsPostToolWithParsing(requests_wrapper=requests_wrapper),
@@ -300,7 +302,7 @@ def _create_api_controller_tool(
                 raise ValueError(f"{endpoint_name} endpoint does not exist.")
 
             docs_str += f"== Docs for {endpoint_name} == \n{yaml.dump(endpoint_docs_by_name.get(matched_key))}\n"
-        agent = _create_api_controller_agent(base_url, docs_str, requests_wrapper, llm)
+        agent = _create_api_controller_agent(base_url, docs_str, requests_wrapper, llm, plugin["headers"])
         return await agent.arun(plan_str)
 
     return Tool(

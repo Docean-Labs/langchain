@@ -119,7 +119,7 @@ class BaseSingleActionAgent(BaseModel):
     def dict(self, **kwargs: Any) -> Dict:
         """Return dictionary representation of agent."""
         _dict = super().dict()
-        _dict["_type"] = self._agent_type
+        _dict["_type"] = str(self._agent_type)
         return _dict
 
     def save(self, file_path: Union[Path, str]) -> None:
@@ -231,7 +231,7 @@ class BaseMultiActionAgent(BaseModel):
     def dict(self, **kwargs: Any) -> Dict:
         """Return dictionary representation of agent."""
         _dict = super().dict()
-        _dict["_type"] = self._agent_type
+        _dict["_type"] = str(self._agent_type)
         return _dict
 
     def save(self, file_path: Union[Path, str]) -> None:

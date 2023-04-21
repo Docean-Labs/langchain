@@ -36,17 +36,17 @@ def num_tokens_from_messages(message, model="gpt-3.5-turbo-0301"):
 
 
 def _prep_output(response):
-    if 'application/json' in response.headers['Content-Type'] and num_tokens_from_messages(message=response.text) < 4096:
+    if 'text/html' not in response.headers.get('Content-Type', ""):
         return response.text
     else:
-        return "Not found any relevant information, please choose another URL."
+        return "Not found any relevant information, please check your params and URL / Endpoint."
 
 
 async def _aprep_output(response):
-    if 'application/json' in response.headers['Content-Type'] and num_tokens_from_messages(message=response.text) < 4096:
+    if 'text/html' not in response.headers.get('Content-Type', ""):
         return await response.text()
     else:
-        return "Not found any relevant information, please choose another URL."
+        return "Not found any relevant information, please check your params and URL / Endpoint."
 
 
 class Requests(BaseModel):

@@ -2,12 +2,16 @@ import re
 from typing import Union
 
 from langchain.agents.agent import AgentOutputParser
-from langchain.schema import AgentAction, AgentFinish
+from langchain.agents.mrkl.prompt import FORMAT_INSTRUCTIONS
+from langchain.schema import AgentAction, AgentFinish, OutputParserException
 
 FINAL_ANSWER_ACTION = "Final Answer:"
 
 
 class MRKLOutputParser(AgentOutputParser):
+    def get_format_instructions(self) -> str:
+        return FORMAT_INSTRUCTIONS
+
     def parse(self, text: str) -> Union[AgentAction, AgentFinish]:
         if FINAL_ANSWER_ACTION in text:
             return AgentFinish(
