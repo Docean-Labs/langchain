@@ -55,7 +55,6 @@ API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
 If you cannot complete them and run into issues, you should explain the issue. If the API endpoint belongs to follow Endpoints, you can retry the API call, else stop retry.
 Your answer must strictly follow the markdown format(apart from JSON, because it need to adapt to json.loads() method) to ensure that the client side can interpret it correctly.
-If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
 
 
 Here is documentation on the API:
@@ -97,6 +96,7 @@ You should always plan your API calls first, and then execute the plan second.
 If the plan includes a DELETE call, be sure to ask the User for authorization first unless the User has specifically asked to delete something.
 You should never return information without executing the api_controller tool.
 Your answer must strictly follow the markdown format(apart from JSON, because it need to adapt to json.loads() method) to ensure that the client side can interpret it correctly.
+If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
 
 Here are the tools to plan and execute API requests: 
 {tool_descriptions}
