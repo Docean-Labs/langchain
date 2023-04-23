@@ -128,11 +128,10 @@ class ZapierNLARunAction(BaseTool):
         """Use the Zapier NLA tool to return a list of all exposed user actions."""
         return self.api_wrapper.run_as_str(self.action_id, instructions, self.params)
 
-    async def _arun(self, instructions):
+    async def _arun(self, instructions: str) -> str:
         """Use the Zapier NLA tool to return a list of all exposed user actions."""
-        with ThreadPoolExecutor() as executor:
-            loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(executor, lambda:self.api_wrapper.run_as_str(self.action_id, instructions, self.params))
+
+        result = await self.api_wrapper.arun_as_str(self.action_id, instructions, self.params)
         return result
 
 
