@@ -8,7 +8,7 @@ API_PLANNER_PROMPT = """You are a planner that plans a sequence of API calls to 
 There are two rules you must follow:
 1) evaluate whether the user query can be solved by the API documented below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
 2) your "Plan" must be only belongs to one of all endpoints given.
-3) Your answer must strictly follow the markdown format(apart from JSON, because it need to adapt to json.loads() method) to ensure that the client side can interpret it correctly.
+3) Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
 
 
 You must only use API endpoints documented below ("Endpoints you can use:").
@@ -55,6 +55,7 @@ API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
 If you cannot complete them and run into issues, you should explain the issue. If the API endpoint belongs to follow Endpoints, you can retry the API call, else stop retry.
 Your answer must strictly follow the markdown format(apart from JSON, because it need to adapt to json.loads() method) to ensure that the client side can interpret it correctly.
+If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
 
 
 Here is documentation on the API:

@@ -38,6 +38,8 @@ def num_tokens_from_messages(message, model="gpt-3.5-turbo-0301"):
 def _prep_output(response):
     if 'text/html' not in response.headers.get('Content-Type', ""):
         return response.text
+    elif response.status_code == 401:
+        return response.status_code
     else:
         return "Not found any relevant information, please check your params and URL / Endpoint."
 
