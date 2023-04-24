@@ -148,7 +148,7 @@ NOTICE:
 Begin!
 
 User query: {input}
-  \nThought:   \nOutput: ...
+  \nThought:   \nOutput: I found the relevant information, and I will do next step.
 {agent_scratchpad}"""
 
 REQUESTS_GET_TOOL_DESCRIPTION = """Use this to GET content from a website.
