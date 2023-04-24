@@ -116,7 +116,7 @@ Examples as follows:
 Here are the tools to plan and execute API requests: 
 Game Plugin api_planner: Can be used to generate the right API calls from Game API Plugin Endpoints to assist with a user query, like Game API Plugin api_planner(query) . Should always be called before trying to calling the Game API Plugin api_controller. There is the description of the Game API Plugin: searching Games and supply games introduction.
 Game Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
-Shopping Params Generator: Generate the most suitable params for the user query
+Shopping Params Generator: Select the most suitable endpoint and generate the most suitable params for the user query
 
 
 User query: can you suggest me five popular games for me.  \n
