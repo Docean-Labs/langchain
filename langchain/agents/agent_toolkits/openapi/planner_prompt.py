@@ -134,7 +134,7 @@ User query: search some bags, please give me the params
 Action: Shopping Params Generator
 Action Input: generate the params for bags
 Observation:   \n Output: 
-Final Answer: there is the params: ...
+Final Answer: there is the json which contains the params and func: 
 
 
 NOTICE: 
