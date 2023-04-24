@@ -92,10 +92,8 @@ API_CONTROLLER_TOOL_DESCRIPTION = "Can be used to execute a plan of API calls, l
 # keeping planning (and specifically the planning prompt) simple.
 API_ORCHESTRATOR_PROMPT = """You are an agent that assists with user queries against API, things like querying information or creating resources.
 Some user queries can be resolved in a single API call, particularly if you can find appropriate params from the OpenAPI spec; though some require several API call.
-You should always plan your API calls first, and then execute the plan second.
 If the plan includes a DELETE call, be sure to ask the User for authorization first unless the User has specifically asked to delete something.
-You should never return information without executing the api_controller tool.
-Your answer must strictly follow the markdown format(apart from JSON, because it need to adapt to json.loads() method) to ensure that the client side can interpret it correctly.
+Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
 If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
 
 Here are the tools to plan and execute API requests: 
