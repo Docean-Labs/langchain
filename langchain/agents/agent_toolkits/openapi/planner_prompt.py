@@ -8,7 +8,7 @@ API_PLANNER_PROMPT = """You are a planner that plans a sequence of API calls to 
 There are two rules you must follow:
 1) evaluate whether the user query can be solved by the API documented below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
 2) your "Plan" must be only belongs to one of all endpoints given.
-3) Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
+3) Your answer must strictly follow the markdown format(apart from JSON, because it need to adapt to json.loads() method) to ensure that the client side can interpret it correctly.
 
 
 You must only use API endpoints documented below ("Endpoints you can use:").
@@ -96,7 +96,6 @@ You should always plan your API calls first, and then execute the plan second.
 If the plan includes a DELETE call, be sure to ask the User for authorization first unless the User has specifically asked to delete something.
 You should never return information without executing the api_controller tool.
 Your answer must strictly follow the markdown format(apart from JSON, because it need to adapt to json.loads() method) to ensure that the client side can interpret it correctly.
-If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
 
 Here are the tools to plan and execute API requests: 
 {tool_descriptions}
@@ -135,12 +134,13 @@ Action Input: 1) GET /game/search | To get some introduction of games   \n
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
 2. You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Output/Final Answer, etc.) you take.
+3. If the final tool used does not have an 'api_planner' or 'api_controller' suffix, directly return the answer provided by that tool.
 ---
 
 Begin!
 
 User query: {input}
-  \nThought:   \nOutput: I should generate a plan to help with this query and then copy that plan exactly to the controller.
+  \nThought: 
 {agent_scratchpad}"""
 
 REQUESTS_GET_TOOL_DESCRIPTION = """Use this to GET content from a website.
