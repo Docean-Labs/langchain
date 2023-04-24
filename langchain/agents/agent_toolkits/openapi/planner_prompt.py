@@ -94,6 +94,8 @@ API_ORCHESTRATOR_PROMPT = """You are an agent that assists with user queries aga
 Some user queries can be resolved in a single API call, particularly if you can find appropriate params from the OpenAPI spec; though some require several API call.
 If the plan includes a DELETE call, be sure to ask the User for authorization first unless the User has specifically asked to delete something.
 Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
+If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
+If you use a Params Generator type of tool, there is no need to execute the returned results of that tool nor call the api_controller tool; directly return the final answer.
 
 Here are the tools to plan and execute API requests: 
 {tool_descriptions}
@@ -146,7 +148,7 @@ NOTICE:
 Begin!
 
 User query: {input}
-  \nThought:   \nOutput: I should generate a plan to help with this query and then copy that plan exactly to the controller.
+  \nThought:   \nOutput: ...
 {agent_scratchpad}"""
 
 REQUESTS_GET_TOOL_DESCRIPTION = """Use this to GET content from a website.
