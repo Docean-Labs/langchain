@@ -191,7 +191,7 @@ def _create_api_controller_agent(
         llm: BaseLanguageModel,
         headers: dict
 ) -> AgentExecutor:
-    requests_wrapper.headers = headers
+    # requests_wrapper.headers = headers
     tools: List[BaseTool] = [
         RequestsGetToolWithParsing(requests_wrapper=requests_wrapper),
         RequestsPostToolWithParsing(requests_wrapper=requests_wrapper),
