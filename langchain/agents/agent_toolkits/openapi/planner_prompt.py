@@ -70,7 +70,7 @@ Here are tools to execute requests against the API: {tool_descriptions}
 Starting below, you should follow this format:
 
 Plan: the plan of API calls to execute  \n
-  \nThought: you should always think about what to do  \n
+Thought: you should always think about what to do  \n
 Action: select the most suitable tool from [{tool_names}]  \n
 Action Input: the input to the action \n
 Observation: process: the output of the action  \n
@@ -81,8 +81,8 @@ Final Answer: the final output from executing the plan or missing information I'
 Notice: You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Output/Final Answer, etc.) you take.
 Begin!
 
-Plan: {input}
-  \nThought: 
+Plan: {input}  \n
+Thought:  \n
 {agent_scratchpad}
 """
 API_CONTROLLER_TOOL_NAME = "api_controller"
@@ -123,19 +123,19 @@ Shopping Params Generator: Select the most suitable endpoint and generate the mo
 User query: can you suggest me five popular games for me.  \n
   \nThought: I should select a suitable api_planner tool for Action and plan API calls first.  \n
 Action:Game Plugin api_planner  \n
-Action Input: search five popular games \n
+Action Input: search five popular game, contains CF \n
 Observation:   \n
-1) GET /game/search | To get some introduction of games   \n
-  \nThought: I'm ready to execute the API calls.  \n
+1) GET /game/search | To get some introduction of games, contains CF   \n
+Thought: I'm ready to execute the API calls.  \n
 Action:Game Plugin api_controller  \n
-Action Input: 1) GET /game/search | To get some introduction of games   \n
-\n
+Action Input: 1) GET /game/search | To get some introduction of games, contains CF   \n
+  \n
 
-User query: search some bags, please give me the params
-Action: Shopping Params Generator
-Action Input: generate the params for bags
-Observation:   \n Output: 
-Final Answer: there is the json which contains the params and func: 
+User query: search some bags, please give me the params  \n
+Action: Shopping Params Generator  \n
+Action Input: generate the params for bags  \n
+Observation:   \n
+Final Answer: there is the json which contains the params and func:  \n
 
 
 NOTICE: 
@@ -148,8 +148,8 @@ NOTICE:
 
 Begin!
 
-User query: {input}
-  \nThought:  I found the relevant information, and I will do next step.
+User query: {input}  \n
+  \nThought:  I found the relevant information, and I will do next step.  \n
 {agent_scratchpad}"""
 
 REQUESTS_GET_TOOL_DESCRIPTION = """Use this to GET content from a website.
