@@ -286,7 +286,7 @@ def _create_api_controller_tool(
                 raise ValueError(f"{endpoint_name} endpoint does not exist.")
 
             docs_str += f"== Docs for {endpoint_name} == \n{yaml.dump(endpoint_docs_by_name.get(matched_key))}\n"
-        agent = _create_api_controller_agent(base_url, docs_str, requests_wrapper, llm)
+        agent = _create_api_controller_agent(base_url, docs_str, requests_wrapper, llm, plugin["headers"])
         return agent.run(plan_str)
 
     async def _acreate_and_run_api_controller_agent(plan_str: str) -> str:
