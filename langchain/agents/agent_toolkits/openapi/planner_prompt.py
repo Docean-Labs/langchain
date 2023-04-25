@@ -29,7 +29,8 @@ User query: tell me a joke  \n
 Plan: Sorry, this API's domain is shopping, not comedy.  \n
 
 Usery query: I want to buy a couch  \n
-Plan: 1. GET /products/search | To search across products, contains your couch.  \n
+Plan: 
+1. GET /products/search | To search across products, contains your couch.  \n
 
   \n
 ----

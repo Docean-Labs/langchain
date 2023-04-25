@@ -2,6 +2,8 @@
 import json
 import re
 from typing import List, Optional
+from langchain.callbacks import AsyncCallbackManager
+from langchain.callbacks.stream_web import StreamingWebCallbackHandler
 
 import yaml
 
@@ -376,7 +378,13 @@ def create_openapi_agent_by_list(
         llm_chain=LLMChain(llm=llm, prompt=prompt),
         allowed_tools=[tool.name for tool in tools],
     )
-    return AgentExecutor.from_agent_and_tools(agent=agent, tools=tools, verbose=True)
+    return AgentExecutor.from_agent_and_tools(
+        agent=agent,
+        tools=tools,
+        verbose=True,
+        streaming=True,
+        callback_manager=AsyncCallbackManager([StreamingWebCallbackHandler()])
+    )
 
 
 def get_gpt_tool(llm):
