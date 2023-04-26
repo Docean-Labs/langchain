@@ -97,7 +97,7 @@ If the plan includes a DELETE call, be sure to ask the User for authorization fi
 Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
 If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
 If you use a Params Generator type of tool, there is no need to execute the returned results of that tool nor call the api_controller tool; directly return the final answer.
-If you use a IOS Local tool, your Final Answer should only contains the scheme, because user do not need other information.
+If you use a IOS Local tool, your Final Answer should only a JSON which contains the scheme, because user do not need other information.
 
 Here are the tools to plan and execute API requests: 
 {tool_descriptions}
