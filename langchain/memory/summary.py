@@ -21,7 +21,7 @@ class SummarizerMixin(BaseModel):
     prompt: BasePromptTemplate = SUMMARY_PROMPT
     summary_message_cls: Type[BaseMessage] = SystemMessage
 
-    def predict_new_summary(
+    async def predict_new_summary(
         self, messages: List[BaseMessage], existing_summary: str
     ) -> str:
         new_lines = get_buffer_string(
@@ -31,7 +31,7 @@ class SummarizerMixin(BaseModel):
         )
 
         chain = LLMChain(llm=self.llm, prompt=self.prompt)
-        return chain.predict(summary=existing_summary, new_lines=new_lines)
+        return await chain.apredict(summary=existing_summary, new_lines=new_lines)
 
 
 class ConversationSummaryMemory(BaseChatMemory, SummarizerMixin):
