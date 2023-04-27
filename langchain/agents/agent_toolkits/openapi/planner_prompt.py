@@ -28,7 +28,7 @@ GET /products/search search across products
 User query: tell me a joke  \n
 Plan: Sorry, this API's domain is shopping, not comedy.  \n
 
-Usery query: I want to buy a couch  \n
+User query: I want to buy a couch  \n
 Plan: 
 1. GET /products/search | To search across products, contains your couch.  \n
 
@@ -55,7 +55,7 @@ API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from
 # Execution.
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
 If you cannot complete them and run into issues, you should explain the issue. If the API endpoint belongs to follow Endpoints, you can retry the API call, else stop retry.
-Your answer must strictly follow the markdown format(apart from JSON, because it need to adapt to json.loads() method) to ensure that the client side can interpret it correctly.
+Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
 
 
 Here is documentation on the API:
@@ -75,10 +75,9 @@ Action: select the most suitable tool from [{tool_names}]  \n
 Action Input: the input to the action \n
 Observation: process: the output of the action  \n
 ... (this Thought/Action/Action Input/Observation can repeat N times)  \n
-  \nThought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
-Final Answer: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
+Thought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
+Answer For AI: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
 
-Notice: You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Output/Final Answer, etc.) you take.
 Begin!
 
 Plan: {input}  \n
@@ -94,10 +93,6 @@ API_CONTROLLER_TOOL_DESCRIPTION = "Can be used to execute a plan of API calls, l
 API_ORCHESTRATOR_PROMPT = """You are an agent that assists with user queries against API, things like querying information or creating resources.
 Some user queries can be resolved in a single API call, particularly if you can find appropriate params from the OpenAPI spec; though some require several API call.
 If the plan includes a DELETE call, be sure to ask the User for authorization first unless the User has specifically asked to delete something.
-Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
-If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
-If you use a Params Generator type of tool, there is no need to execute the returned results of that tool nor call the api_controller tool; directly return the final answer.
-If you use IOS Local tool, you must to be an translator which extract the parameters from users’ query, and convert the query to full url scheme that includes right parameters. Please use following json format: “scheme”: “URL_SCHEME”, do not say any other words except the json as the Fianl Answer.
 
 Here are the tools to plan and execute API requests: 
 {tool_descriptions}
@@ -105,7 +100,7 @@ Here are the tools to plan and execute API requests:
 Starting below, you should follow this format:
 
 User query: the query a User wants help with related to the API.  \n
-  \nThought: you should always think about what to do.  \n
+Thought: you should always think about what to do.  \n
 Action: select a tool which must be only one of the tools [{tool_names}].  \n
 Action Input: the input to the tool fo the above Action.  \n
 Observation: the result of the Action within Action Input.  \n
@@ -122,7 +117,7 @@ Shopping Params Generator: Select the most suitable endpoint and generate the mo
 
 
 User query: can you suggest me five popular games for me.  \n
-  \nThought: I should select a suitable api_planner tool for Action and plan API calls first.  \n
+Thought: I should select a suitable api_planner tool for Action and plan API calls first.  \n
 Action:Game Plugin api_planner  \n
 Action Input: search five popular game, contains CF \n
 Observation:   \n
@@ -150,8 +145,9 @@ NOTICE:
 Begin!
 
 User query: {input}  \n
-  \nThought:  I found the relevant information, and I will do next step.  \n
-{agent_scratchpad}"""
+Thought:  I found the relevant information, and I will do next step or return Final Answer directly.  \n
+{agent_scratchpad}  \n
+"""
 
 REQUESTS_GET_TOOL_DESCRIPTION = """Use this to GET content from a website.
 Input to the tool should be a json string with 3 keys: "url", "params" and "output_instructions".
