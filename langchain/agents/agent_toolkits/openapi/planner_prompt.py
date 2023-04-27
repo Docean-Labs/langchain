@@ -69,7 +69,7 @@ Action Input: the input to the action.  \n
 Observation: the output of the action.  \n
 ... (this Thought/Action/Action Input/Observation can repeat N times)  \n
 Thought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
-AI Response:: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
+Plugin Response:: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
 
 Begin!
 
