@@ -5,6 +5,7 @@ from langchain.agents.agent import AgentOutputParser
 from langchain.agents.mrkl.prompt import FORMAT_INSTRUCTIONS
 from langchain.schema import AgentAction, AgentFinish, OutputParserException
 
+FINAL_ANSWER_ACTION_FIRST = "Answer For AI:"
 FINAL_ANSWER_ACTION = "Final Answer:"
 
 
@@ -16,6 +17,10 @@ class MRKLOutputParser(AgentOutputParser):
         if FINAL_ANSWER_ACTION in text:
             return AgentFinish(
                 {"output": text.split(FINAL_ANSWER_ACTION)[-1].strip()}, text
+            )
+        if FINAL_ANSWER_ACTION_FIRST in text:
+            return AgentFinish(
+                {"output": text.split(FINAL_ANSWER_ACTION_FIRST)[-1].strip()}, text
             )
         # \s matches against tab/newline/whitespace
         regex = r"Action\s*\d*\s*:(.*?)\nAction\s*\d*\s*Input\s*\d*\s*:[\s]*(.*)"
