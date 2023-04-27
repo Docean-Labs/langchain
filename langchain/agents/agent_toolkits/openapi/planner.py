@@ -38,7 +38,7 @@ from langchain.memory import ReadOnlySharedMemory
 from langchain.prompts import PromptTemplate
 from langchain.prompts.base import BasePromptTemplate
 from langchain.requests import RequestsWrapper
-from langchain.schema import BaseLanguageModel
+from langchain.schema import BaseLanguageModel,BaseMemory
 from langchain.tools.base import BaseTool
 from langchain.tools.requests.tool import BaseRequestsTool
 
@@ -374,7 +374,8 @@ def create_openapi_agent_by_list(
         requests_wrapper: RequestsWrapper,
         llm: BaseLanguageModel,
         plugins: List[dict],
-        custom_tools: List[BaseTool]
+        custom_tools: List[BaseTool],
+        memory: BaseMemory
 ) -> AgentExecutor:
     tools = []
     for index, api_spec in enumerate(api_specs):
@@ -401,6 +402,7 @@ def create_openapi_agent_by_list(
         tools=tools,
         verbose=True,
         streaming=True,
+        memory=memory,
         callback_manager=AsyncCallbackManager([StreamingWebCallbackHandler()])
     )
 
