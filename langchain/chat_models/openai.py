@@ -307,13 +307,9 @@ class ChatOpenAI(BaseChatModel):
                     )
                 else:
                     self.callback_manager.on_llm_new_token(
-                        token,
+                        stream_resp,
                         verbose=self.verbose,
                     )
-            await self.callback_manager.on_llm_new_token(
-                    "\n",
-                    verbose=self.verbose,
-            )
             message = _convert_dict_to_message(
                 {"content": inner_completion, "role": role}
             )
