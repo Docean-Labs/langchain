@@ -16,11 +16,11 @@ class MRKLOutputParser(AgentOutputParser):
     def parse(self, text: str) -> Union[AgentAction, AgentFinish]:
         if FINAL_ANSWER_ACTION in text:
             return AgentFinish(
-                {"output": text.split(FINAL_ANSWER_ACTION)[-1].strip()}, text
+                {"output": text.split(FINAL_ANSWER_ACTION)[-1].strip()+"  \n"}, text
             )
         if FINAL_ANSWER_ACTION_FIRST in text:
             return AgentFinish(
-                {"output": text.split(FINAL_ANSWER_ACTION_FIRST)[-1].strip()}, text
+                {"output": text.split(FINAL_ANSWER_ACTION_FIRST)[-1].strip()+"  \n"}, text
             )
         # \s matches against tab/newline/whitespace
         regex = (
@@ -30,6 +30,6 @@ class MRKLOutputParser(AgentOutputParser):
         if match:
             action = match.group(1).strip()
             action_input = match.group(2)
-            return AgentAction(action, action_input.strip(" ").strip('"'), text)
+            return AgentAction(action, action_input.strip(" ").strip('"')+"  \n", text)
         else:
             return AgentAction("AnyGPT", text, text)
