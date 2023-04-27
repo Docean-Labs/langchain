@@ -38,7 +38,7 @@ from langchain.memory import ReadOnlySharedMemory
 from langchain.prompts import PromptTemplate
 from langchain.prompts.base import BasePromptTemplate
 from langchain.requests import RequestsWrapper
-from langchain.schema import BaseLanguageModel,BaseMemory
+from langchain.schema import BaseLanguageModel, BaseMemory
 from langchain.tools.base import BaseTool
 from langchain.tools.requests.tool import BaseRequestsTool
 
@@ -50,6 +50,7 @@ from langchain.tools.requests.tool import BaseRequestsTool
 # However, the goal for now is to have only a single inference step.
 MAX_RESPONSE_LENGTH = 5000
 
+
 def parse_text(text):
     text = text.strip("```json")
     text = text.strip("```")
@@ -58,6 +59,8 @@ def parse_text(text):
     text = text.replace("\t", "")
     text = text.replace(" ", "")
     return text
+
+
 def _get_default_llm_chain(prompt: BasePromptTemplate) -> LLMChain:
     return LLMChain(
         llm=OpenAI(),
@@ -66,7 +69,7 @@ def _get_default_llm_chain(prompt: BasePromptTemplate) -> LLMChain:
 
 
 def _get_default_llm_chain_factory(
-    prompt: BasePromptTemplate,
+        prompt: BasePromptTemplate,
 ) -> Callable[[], LLMChain]:
     """Returns a default LLMChain factory."""
     return partial(_get_default_llm_chain, prompt)
@@ -334,11 +337,11 @@ def _create_api_controller_tool(
 
 
 def create_openapi_agent(
-    api_spec: ReducedOpenAPISpec,
-    requests_wrapper: RequestsWrapper,
-    llm: BaseLanguageModel,
-    shared_memory: Optional[ReadOnlySharedMemory] = None,
-    verbose: bool = True,
+        api_spec: ReducedOpenAPISpec,
+        requests_wrapper: RequestsWrapper,
+        llm: BaseLanguageModel,
+        shared_memory: Optional[ReadOnlySharedMemory] = None,
+        verbose: bool = True,
 ) -> AgentExecutor:
     """Instantiate API planner and controller for a given spec.
 
