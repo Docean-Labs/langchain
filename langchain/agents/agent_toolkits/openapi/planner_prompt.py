@@ -23,13 +23,11 @@ User query: tell me a joke  \n
 Plan: Sorry, this API's domain is shopping, not comedy.  \n
 
 User query: I want to buy a couch  \n
-Plan: 
-1. GET /products/search | To search across products, contains your couch.  \n
+Plan:  1. GET /products/search | To search across products, contains your couch.  \n  \n
 
 ----
 
 Here are endpoints you can use. Do not reference any of the endpoints above.
-
 {endpoints}
 
 ----
@@ -44,7 +42,7 @@ NOTICE:
 Begin:
 
 User query: {query}
-Plan:
+Plan:             \n  \n
 """
 API_PLANNER_TOOL_NAME = "api_planner"
 API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from {0} Endpoints to assist with a user query, like {0} api_planner(query) . Should always be called before trying to calling the {0} api_controller. There is the description of the {0}: {1}"
@@ -60,9 +58,7 @@ Base url: {api_url}
 Endpoints:
 {api_docs}
 
-
 Here are tools to execute requests against the API: {tool_descriptions}
-
 
 Starting below, you should follow this format:
 
@@ -77,7 +73,7 @@ Answer For AI: the final output from executing the plan or missing information I
 
 Begin!
 
-Plan: {input}  \n
+Plan: {input}  \n  \n
 Thought:  \n
 {agent_scratchpad}
 """
@@ -97,12 +93,12 @@ Here are the tools to plan and execute API requests:
 Starting below, you should follow this format:
 
 User query: the query a User wants help with related to the API.  \n
-Thought:  \n you should always think about what to do.  \n
+Thought: you should always think about what to do.  \n
 Action: select a tool which must be only one of the tools [{tool_names}].  \n
 Action Input: the input to the tool fo the above Action.  \n
 Observation: the result of the Action within Action Input.  \n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)  \n
-Thought:  \n I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
+Thought:  \nI am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
 Final Answer: the final output from executing the plan.  \n
 
 
@@ -114,7 +110,7 @@ Shopping Params Generator: Select the most suitable endpoint and generate the mo
 
 
 User query: can you suggest me five popular games for me.  \n
-Thought:  \n I should select a suitable api_planner tool for Action and plan API calls first.  \n
+Thought: I should select a suitable api_planner tool for Action and plan API calls first.  \n
 Action:Game Plugin api_planner  \n
 Action Input: search five popular game, contains CF \n
 Observation:   \n
@@ -122,7 +118,6 @@ Observation:   \n
 Thought:  \n I'm ready to execute the API calls.  \n
 Action:Game Plugin api_controller  \n
 Action Input: 1) GET /game/search | To get some introduction of games, contains CF   \n
-  \n
 
 User query: search some bags, please give me the params  \n
 Action: Shopping Params Generator  \n
