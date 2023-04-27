@@ -162,7 +162,7 @@ class Chain(BaseModel, ABC):
             await self.callback_manager.on_chain_end(outputs, verbose=self.verbose)
         else:
             self.callback_manager.on_chain_end(outputs, verbose=self.verbose)
-        return await self.prep_outputs(inputs, outputs, return_only_outputs)
+        return await self.aprep_outputs(inputs, outputs, return_only_outputs)
 
     def store_textbuffer(self, input_values: Dict[str, str], output_values: Dict[str, str]) -> None:
         buffer_index = self.textbuffer_index
@@ -173,7 +173,24 @@ class Chain(BaseModel, ABC):
         self.textbuffer[buffer_index] = data_dict
         self.textbuffer_index += 1
 
-    async def prep_outputs(
+    def prep_outputs(
+        self,
+        inputs: Dict[str, str],
+        outputs: Dict[str, str],
+        return_only_outputs: bool = False,
+    ) -> Dict[str, str]:
+        """Validate and prep outputs."""
+
+        self._validate_outputs(outputs)
+
+        if self.memory is not None:
+            self.memory.save_context(inputs, outputs)
+        if return_only_outputs:
+            return outputs
+        else:
+            return {**inputs, **outputs}
+
+    async def aprep_outputs(
         self,
         inputs: Dict[str, str],
         outputs: Dict[str, str],
