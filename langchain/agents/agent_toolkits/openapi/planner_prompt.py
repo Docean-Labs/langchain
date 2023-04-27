@@ -5,12 +5,6 @@ from langchain.prompts.prompt import PromptTemplate
 
 API_PLANNER_PROMPT = """You are a planner that plans a sequence of API calls to assist with user queries against an API.
 
-There are two rules you must follow:
-1) evaluate whether the user query can be solved by the API documented below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
-2) your "Plan" must be only belongs to one of all endpoints given.
-3) Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
-
-
 You must only use API endpoints documented below ("Endpoints you can use:").
 Some user queries may be resolved in a single API call, but some will require several API calls.
 Your "Plan" will be passed to an API controller that can format it into web requests and return the responses.
@@ -32,7 +26,6 @@ User query: I want to buy a couch  \n
 Plan: 
 1. GET /products/search | To search across products, contains your couch.  \n
 
-  \n
 ----
 
 Here are endpoints you can use. Do not reference any of the endpoints above.
@@ -41,7 +34,11 @@ Here are endpoints you can use. Do not reference any of the endpoints above.
 
 ----
 NOTICE: 
-1. Your "Plan" must be one of the endpoints given above, not any other statement.
+1) Evaluate whether the user query can be solved by the API documented below. If no, say why, If yes, generate a "Plan" with a list of required APIs.
+2) your "Plan" must be only belongs to one of all endpoints given.
+3) Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
+4) Your "Plan" must be one of the endpoints given above, not any other statement.
+
 ---
 
 Begin:
@@ -70,12 +67,12 @@ Here are tools to execute requests against the API: {tool_descriptions}
 Starting below, you should follow this format:
 
 Plan: the plan of API calls to execute  \n
-Thought: you should always think about what to do  \n
+Thought: \n you should always think about what to do  \n
 Action: select the most suitable tool from [{tool_names}]  \n
 Action Input: the input to the action \n
 Observation: process: the output of the action  \n
 ... (this Thought/Action/Action Input/Observation can repeat N times)  \n
-Thought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
+Thought:  \nI am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
 Answer For AI: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
 
 Begin!
@@ -100,12 +97,12 @@ Here are the tools to plan and execute API requests:
 Starting below, you should follow this format:
 
 User query: the query a User wants help with related to the API.  \n
-Thought: you should always think about what to do.  \n
+Thought:  \n you should always think about what to do.  \n
 Action: select a tool which must be only one of the tools [{tool_names}].  \n
 Action Input: the input to the tool fo the above Action.  \n
 Observation: the result of the Action within Action Input.  \n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)  \n
-Thought: I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
+Thought:  \n I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
 Final Answer: the final output from executing the plan.  \n
 
 
@@ -117,12 +114,12 @@ Shopping Params Generator: Select the most suitable endpoint and generate the mo
 
 
 User query: can you suggest me five popular games for me.  \n
-Thought: I should select a suitable api_planner tool for Action and plan API calls first.  \n
+Thought:  \n I should select a suitable api_planner tool for Action and plan API calls first.  \n
 Action:Game Plugin api_planner  \n
 Action Input: search five popular game, contains CF \n
 Observation:   \n
 1) GET /game/search | To get some introduction of games, contains CF   \n
-Thought: I'm ready to execute the API calls.  \n
+Thought:  \n I'm ready to execute the API calls.  \n
 Action:Game Plugin api_controller  \n
 Action Input: 1) GET /game/search | To get some introduction of games, contains CF   \n
   \n
@@ -145,7 +142,7 @@ NOTICE:
 Begin!
 
 User query: {input}  \n
-Thought: I found the relevant information, and I will do next step or return Final Answer directly.  \n
+Thought:  \n I found the relevant information, and I will do next step or return Final Answer directly.  \n
 {agent_scratchpad}  \n
 """
 
