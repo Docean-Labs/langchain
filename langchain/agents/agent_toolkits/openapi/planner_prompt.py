@@ -118,6 +118,8 @@ Observation:   \n
 Thought:  \n I'm ready to execute the API calls.  \n
 Action:Game Plugin api_controller  \n
 Action Input: 1) GET /game/search | To get some introduction of games, contains CF   \n
+Observation:   \n  \n
+Final Answer: The five popular games are as follows:  \n
 
 User query: search some bags, please give me the params  \n
 Action: Shopping Params Generator  \n
