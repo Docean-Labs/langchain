@@ -708,6 +708,7 @@ class AgentExecutor(Chain):
                     color=None,
                     **tool_run_kwargs,
                 )
+            observation += "  \n"
             result.append((agent_action, observation))
         return result
 
@@ -767,6 +768,7 @@ class AgentExecutor(Chain):
                     color=None,
                     **tool_run_kwargs,
                 )
+            observation += "  \n"
             return agent_action, observation
 
         # Use asyncio.gather to run multiple tool.arun() calls concurrently

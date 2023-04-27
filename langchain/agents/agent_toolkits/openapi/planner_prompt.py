@@ -50,7 +50,7 @@ API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from
 # Execution.
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
 If you cannot complete them and run into issues, you should explain the issue. If the API endpoint belongs to follow Endpoints, you can retry the API call, else stop retry.
-Your answer must strictly follow the markdown format(JSON data must be formatted by following the pattern: '''json [json data]'''.) to ensure that the client side can interpret it correctly.
+Your answer must strictly follow the markdown format(contains all code format, json, url and picture and so on) to ensure that the client side can interpret it correctly.
 
 
 Here is documentation on the API:
@@ -64,9 +64,9 @@ Starting below, you should follow this format:
 
 Plan: the plan of API calls to execute  \n
 Thought: \n you should always think about what to do  \n
-Action: select the most suitable tool from [{tool_names}]
-Action Input: the input to the action \n
-Observation: process: the output of the action  \n
+Action: select the most suitable tool from [{tool_names}].
+Action Input: the input to the action.  \n
+Observation: the output of the action.  \n
 ... (this Thought/Action/Action Input/Observation can repeat N times)  \n
 Thought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
 AI Response:: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
@@ -112,18 +112,18 @@ Shopping Params Generator: Select the most suitable endpoint and generate the mo
 User query: can you suggest me five popular games for me.  \n
 Thought: I should select a suitable api_planner tool for Action and plan API calls first.  \n
 Action:Game Plugin api_planner
-Action Input: search five popular game, contains CF \n
+Action Input: search five popular game, contains CF. \n
 Observation:   \n  \n
-1) GET /game/search | To get some introduction of games, contains CF   \n
+1) GET /game/search | To get some introduction of games, contains CF.   \n
 Thought: I'm ready to execute the API calls.  \n
 Action:Game Plugin api_controller
-Action Input: 1) GET /game/search | To get some introduction of games, contains CF   \n
+Action Input: 1) GET /game/search | To get some introduction of games, contains CF.   \n
 Observation:   \n  \n
 Final Answer: The five popular games are as follows:  \n
 
-User query: search some bags, please give me the params  \n
-Action: Shopping Params Generator
-Action Input: generate the params for bags  \n
+User query: search some bags, please give me the params.  \n
+Action: Shopping Params Generator.
+Action Input: generate the params for bags.  \n
 Observation:   \n  \n
 Final Answer: there is the json which contains the params and func:  \n
 
