@@ -105,7 +105,7 @@ Action: select a tool which must be only one of the tools [{tool_names}].  \n
 Action Input: the input to the tool fo the above Action.  \n
 Observation: the result of the Action within Action Input.  \n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)  \n
-  \nThought: I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
+Thought: I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
 Final Answer: the final output from executing the plan.  \n
 
 
@@ -136,7 +136,7 @@ Final Answer: there is the json which contains the params and func:  \n
 
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
-2. You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Output/Final Answer, etc.) you take.
+2. You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Final Answer, etc.) you take.
 3. If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
 4. If you use a Params Generator type of tool, there is no need to execute the returned results of that tool nor call the api_controller tool; directly return the final answer.
 5. If you use IOS Local tool, you must to be an translator which extract the parameters from users’ query, and convert the query to full url scheme that includes right parameters. Please use following json format: “scheme”: “URL_SCHEME”, do not say any other words except the json as the Fianl Answer.
@@ -145,7 +145,7 @@ NOTICE:
 Begin!
 
 User query: {input}  \n
-Thought:  I found the relevant information, and I will do next step or return Final Answer directly.  \n
+Thought: I found the relevant information, and I will do next step or return Final Answer directly.  \n
 {agent_scratchpad}  \n
 """
 
