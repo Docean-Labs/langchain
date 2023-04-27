@@ -50,7 +50,7 @@ API_PLANNER_TOOL_DESCRIPTION = "Can be used to generate the right API calls from
 # Execution.
 API_CONTROLLER_PROMPT = """You are an agent that gets a sequence of API calls and given their documentation, should execute them and return the final response.
 If you cannot complete them and run into issues, you should explain the issue. If the API endpoint belongs to follow Endpoints, you can retry the API call, else stop retry.
-Your answer must strictly follow the markdown format to ensure that the client side can interpret it correctly.
+Your answer must strictly follow the markdown format(JSON data must be formatted by following the pattern: '''json [json data]'''.) to ensure that the client side can interpret it correctly.
 
 
 Here is documentation on the API:
@@ -64,17 +64,17 @@ Starting below, you should follow this format:
 
 Plan: the plan of API calls to execute  \n
 Thought: \n you should always think about what to do  \n
-Action: select the most suitable tool from [{tool_names}]  \n
+Action: select the most suitable tool from [{tool_names}]
 Action Input: the input to the action \n
 Observation: process: the output of the action  \n
 ... (this Thought/Action/Action Input/Observation can repeat N times)  \n
-Thought:  \nI am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
-Answer For AI: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
+Thought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
+AI Response:: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
 
 Begin!
 
 Plan: {input}  \n  \n
-Thought:  \n
+Thought: 
 {agent_scratchpad}
 """
 API_CONTROLLER_TOOL_NAME = "api_controller"
@@ -94,11 +94,11 @@ Starting below, you should follow this format:
 
 User query: the query a User wants help with related to the API.  \n
 Thought: you should always think about what to do.  \n
-Action: select a tool which must be only one of the tools [{tool_names}].  \n
+Action: select a tool which must be only one of the tools [{tool_names}].
 Action Input: the input to the tool fo the above Action.  \n
 Observation: the result of the Action within Action Input.  \n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)  \n
-Thought:  \nI am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
+Thought: I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
 Final Answer: the final output from executing the plan.  \n
 
 
@@ -111,20 +111,20 @@ Shopping Params Generator: Select the most suitable endpoint and generate the mo
 
 User query: can you suggest me five popular games for me.  \n
 Thought: I should select a suitable api_planner tool for Action and plan API calls first.  \n
-Action:Game Plugin api_planner  \n
+Action:Game Plugin api_planner
 Action Input: search five popular game, contains CF \n
-Observation:   \n
+Observation:   \n  \n
 1) GET /game/search | To get some introduction of games, contains CF   \n
-Thought:  \n I'm ready to execute the API calls.  \n
-Action:Game Plugin api_controller  \n
+Thought: I'm ready to execute the API calls.  \n
+Action:Game Plugin api_controller
 Action Input: 1) GET /game/search | To get some introduction of games, contains CF   \n
 Observation:   \n  \n
 Final Answer: The five popular games are as follows:  \n
 
 User query: search some bags, please give me the params  \n
-Action: Shopping Params Generator  \n
+Action: Shopping Params Generator
 Action Input: generate the params for bags  \n
-Observation:   \n
+Observation:   \n  \n
 Final Answer: there is the json which contains the params and func:  \n
 
 
@@ -134,6 +134,7 @@ NOTICE:
 3. If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
 4. If you use a Params Generator type of tool, there is no need to execute the returned results of that tool nor call the api_controller tool; directly return the final answer.
 5. If you use IOS Local tool, you must to be an translator which extract the parameters from users’ query, and convert the query to full url scheme that includes right parameters. Please use following json format: “scheme”: “URL_SCHEME”, do not say any other words except the json as the Fianl Answer.
+6. When you generate some links, you must ensure that these web links are functional and usable, rather than being hypothetical example links.
 ---
 
 Begin!

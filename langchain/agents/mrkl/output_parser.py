@@ -5,7 +5,7 @@ from langchain.agents.agent import AgentOutputParser
 from langchain.agents.mrkl.prompt import FORMAT_INSTRUCTIONS
 from langchain.schema import AgentAction, AgentFinish, OutputParserException
 
-FINAL_ANSWER_ACTION_FIRST = "Answer For AI:"
+FINAL_ANSWER_ACTION_FIRST = "AI Response:"
 FINAL_ANSWER_ACTION = "Final Answer:"
 
 
@@ -30,6 +30,6 @@ class MRKLOutputParser(AgentOutputParser):
         if match:
             action = match.group(1).strip()
             action_input = match.group(2)
-            return AgentAction(action, action_input.strip(" ").strip('"')+"  \n", text)
+            return AgentAction(action, action_input.strip(" ").strip('"'), text)
         else:
             return AgentAction("AnyGPT", text, text)
