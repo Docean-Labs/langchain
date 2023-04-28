@@ -9,9 +9,10 @@ from langchain.schema import AgentAction, AgentFinish, LLMResult
 class StreamingWebCallbackHandler(BaseCallbackHandler):
     """Callback handler for streaming. Only works with LLMs that support streaming."""
 
-    def __init__(self, callback: Optional[Callable] = None, *args, **kwargs):
+    def __init__(self, callback: Optional[Callable] = None, billing: Optional[Callable] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._callback = callback
+        self._billing = billing
 
     async def on_llm_start(
             self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
@@ -68,3 +69,9 @@ class StreamingWebCallbackHandler(BaseCallbackHandler):
 
     async def on_agent_finish(self, finish: AgentFinish, **kwargs: Any) -> None:
         """Run on agent end."""
+
+    async def on_billing_action(self, prompt_tokens: int, completion_tokens: int, total_tokens: int, date: int) -> None:
+        """on billing action"""
+        if self._billing:
+            await self._billing(prompt_tokens, completion_tokens, total_tokens, date)
+        print("have nothing billing action")

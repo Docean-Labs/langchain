@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import sys
+import time
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
 
 from pydantic import Extra, Field, root_validator
@@ -41,11 +42,11 @@ def _create_retry_decorator(llm: ChatOpenAI) -> Callable[[Any], Any]:
         stop=stop_after_attempt(llm.max_retries),
         wait=wait_exponential(multiplier=1, min=min_seconds, max=max_seconds),
         retry=(
-            retry_if_exception_type(openai.error.Timeout)
-            | retry_if_exception_type(openai.error.APIError)
-            | retry_if_exception_type(openai.error.APIConnectionError)
-            | retry_if_exception_type(openai.error.RateLimitError)
-            | retry_if_exception_type(openai.error.ServiceUnavailableError)
+                retry_if_exception_type(openai.error.Timeout)
+                | retry_if_exception_type(openai.error.APIError)
+                | retry_if_exception_type(openai.error.APIConnectionError)
+                | retry_if_exception_type(openai.error.RateLimitError)
+                | retry_if_exception_type(openai.error.ServiceUnavailableError)
         ),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
@@ -208,11 +209,11 @@ class ChatOpenAI(BaseChatModel):
             stop=stop_after_attempt(self.max_retries),
             wait=wait_exponential(multiplier=1, min=min_seconds, max=max_seconds),
             retry=(
-                retry_if_exception_type(openai.error.Timeout)
-                | retry_if_exception_type(openai.error.APIError)
-                | retry_if_exception_type(openai.error.APIConnectionError)
-                | retry_if_exception_type(openai.error.RateLimitError)
-                | retry_if_exception_type(openai.error.ServiceUnavailableError)
+                    retry_if_exception_type(openai.error.Timeout)
+                    | retry_if_exception_type(openai.error.APIError)
+                    | retry_if_exception_type(openai.error.APIConnectionError)
+                    | retry_if_exception_type(openai.error.RateLimitError)
+                    | retry_if_exception_type(openai.error.ServiceUnavailableError)
             ),
             before_sleep=before_sleep_log(logger, logging.WARNING),
         )
@@ -242,7 +243,7 @@ class ChatOpenAI(BaseChatModel):
         return {"token_usage": overall_token_usage, "model_name": self.model_name}
 
     def _generate(
-        self, messages: List[BaseMessage], stop: Optional[List[str]] = None
+            self, messages: List[BaseMessage], stop: Optional[List[str]] = None
     ) -> ChatResult:
         message_dicts, params = self._create_message_dicts(messages, stop)
         if self.streaming:
@@ -250,7 +251,7 @@ class ChatOpenAI(BaseChatModel):
             role = "assistant"
             params["stream"] = True
             for stream_resp in self.completion_with_retry(
-                messages=message_dicts, **params
+                    messages=message_dicts, **params
             ):
                 role = stream_resp["choices"][0]["delta"].get("role", role)
                 token = stream_resp["choices"][0]["delta"].get("content", "")
@@ -267,7 +268,7 @@ class ChatOpenAI(BaseChatModel):
         return self._create_chat_result(response)
 
     def _create_message_dicts(
-        self, messages: List[BaseMessage], stop: Optional[List[str]]
+            self, messages: List[BaseMessage], stop: Optional[List[str]]
     ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         params: Dict[str, Any] = {**{"model": self.model_name}, **self._default_params}
         if stop is not None:
@@ -287,15 +288,16 @@ class ChatOpenAI(BaseChatModel):
         return ChatResult(generations=generations, llm_output=llm_output)
 
     async def _agenerate(
-        self, messages: List[BaseMessage], stop: Optional[List[str]] = None
+            self, messages: List[BaseMessage], stop: Optional[List[str]] = None
     ) -> ChatResult:
         message_dicts, params = self._create_message_dicts(messages, stop)
+
         if self.streaming:
             inner_completion = ""
             role = "assistant"
             params["stream"] = True
             async for stream_resp in await acompletion_with_retry(
-                self, messages=message_dicts, **params
+                    self, messages=message_dicts, **params
             ):
                 role = stream_resp["choices"][0]["delta"].get("role", role)
                 token = stream_resp["choices"][0]["delta"].get("content", "")
@@ -310,6 +312,18 @@ class ChatOpenAI(BaseChatModel):
                         stream_resp,
                         verbose=self.verbose,
                     )
+
+            # billing
+            prompt_tokens = sum(len(message.content) for message in messages)
+            print("prompt_tokens -> ", prompt_tokens)
+            completion_tokens = len(inner_completion)
+            print("completion_tokens -> ", completion_tokens)
+            total_tokens = completion_tokens + prompt_tokens
+            print("total_tokens ->", total_tokens)
+            date = int(time.time() * 1000)
+            print("data -> ", date)
+            await self.callback_manager.on_billing_action(prompt_tokens, completion_tokens, total_tokens, date)
+
             message = _convert_dict_to_message(
                 {"content": inner_completion, "role": role}
             )

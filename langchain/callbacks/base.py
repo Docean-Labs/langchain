@@ -32,7 +32,7 @@ class BaseCallbackHandler(ABC):
 
     @abstractmethod
     def on_llm_start(
-        self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
+            self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
     ) -> Any:
         """Run when LLM starts running."""
 
@@ -46,13 +46,13 @@ class BaseCallbackHandler(ABC):
 
     @abstractmethod
     def on_llm_error(
-        self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
+            self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
     ) -> Any:
         """Run when LLM errors."""
 
     @abstractmethod
     def on_chain_start(
-        self, serialized: Dict[str, Any], inputs: Dict[str, Any], **kwargs: Any
+            self, serialized: Dict[str, Any], inputs: Dict[str, Any], **kwargs: Any
     ) -> Any:
         """Run when chain starts running."""
 
@@ -62,13 +62,13 @@ class BaseCallbackHandler(ABC):
 
     @abstractmethod
     def on_chain_error(
-        self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
+            self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
     ) -> Any:
         """Run when chain errors."""
 
     @abstractmethod
     def on_tool_start(
-        self, serialized: Dict[str, Any], input_str: str, **kwargs: Any
+            self, serialized: Dict[str, Any], input_str: str, **kwargs: Any
     ) -> Any:
         """Run when tool starts running."""
 
@@ -78,7 +78,7 @@ class BaseCallbackHandler(ABC):
 
     @abstractmethod
     def on_tool_error(
-        self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
+            self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
     ) -> Any:
         """Run when tool errors."""
 
@@ -93,6 +93,9 @@ class BaseCallbackHandler(ABC):
     @abstractmethod
     def on_agent_finish(self, finish: AgentFinish, **kwargs: Any) -> Any:
         """Run on agent end."""
+
+    async def on_billing_action(self, prompt_tokens: int, completion_tokens: int, total_tokens: int, date: int) -> None:
+        """on billing action """
 
 
 class BaseCallbackManager(BaseCallbackHandler, ABC):
@@ -128,11 +131,11 @@ class CallbackManager(BaseCallbackManager):
         self.handlers: List[BaseCallbackHandler] = handlers
 
     def on_llm_start(
-        self,
-        serialized: Dict[str, Any],
-        prompts: List[str],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            serialized: Dict[str, Any],
+            prompts: List[str],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when LLM starts running."""
         for handler in self.handlers:
@@ -141,7 +144,7 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_llm_start(serialized, prompts, **kwargs)
 
     def on_llm_new_token(
-        self, token: str, verbose: bool = False, **kwargs: Any
+            self, token: str, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run when LLM generates a new token."""
         for handler in self.handlers:
@@ -150,7 +153,7 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_llm_new_token(token, **kwargs)
 
     def on_llm_end(
-        self, response: LLMResult, verbose: bool = False, **kwargs: Any
+            self, response: LLMResult, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run when LLM ends running."""
         for handler in self.handlers:
@@ -159,10 +162,10 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_llm_end(response)
 
     def on_llm_error(
-        self,
-        error: Union[Exception, KeyboardInterrupt],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            error: Union[Exception, KeyboardInterrupt],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when LLM errors."""
         for handler in self.handlers:
@@ -171,11 +174,11 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_llm_error(error)
 
     def on_chain_start(
-        self,
-        serialized: Dict[str, Any],
-        inputs: Dict[str, Any],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            serialized: Dict[str, Any],
+            inputs: Dict[str, Any],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when chain starts running."""
         for handler in self.handlers:
@@ -184,7 +187,7 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_chain_start(serialized, inputs, **kwargs)
 
     def on_chain_end(
-        self, outputs: Dict[str, Any], verbose: bool = False, **kwargs: Any
+            self, outputs: Dict[str, Any], verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run when chain ends running."""
         for handler in self.handlers:
@@ -193,10 +196,10 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_chain_end(outputs)
 
     def on_chain_error(
-        self,
-        error: Union[Exception, KeyboardInterrupt],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            error: Union[Exception, KeyboardInterrupt],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when chain errors."""
         for handler in self.handlers:
@@ -205,11 +208,11 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_chain_error(error)
 
     def on_tool_start(
-        self,
-        serialized: Dict[str, Any],
-        input_str: str,
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            serialized: Dict[str, Any],
+            input_str: str,
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when tool starts running."""
         for handler in self.handlers:
@@ -218,7 +221,7 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_tool_start(serialized, input_str, **kwargs)
 
     def on_agent_action(
-        self, action: AgentAction, verbose: bool = False, **kwargs: Any
+            self, action: AgentAction, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run when tool starts running."""
         for handler in self.handlers:
@@ -234,10 +237,10 @@ class CallbackManager(BaseCallbackManager):
                     handler.on_tool_end(output, **kwargs)
 
     def on_tool_error(
-        self,
-        error: Union[Exception, KeyboardInterrupt],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            error: Union[Exception, KeyboardInterrupt],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when tool errors."""
         for handler in self.handlers:
@@ -252,7 +255,7 @@ class CallbackManager(BaseCallbackManager):
                 handler.on_text(text, **kwargs)
 
     def on_agent_finish(
-        self, finish: AgentFinish, verbose: bool = False, **kwargs: Any
+            self, finish: AgentFinish, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run on agent end."""
         for handler in self.handlers:
@@ -277,7 +280,7 @@ class AsyncCallbackHandler(BaseCallbackHandler):
     """Async callback handler that can be used to handle callbacks from langchain."""
 
     async def on_llm_start(
-        self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
+            self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
     ) -> None:
         """Run when LLM starts running."""
 
@@ -288,12 +291,12 @@ class AsyncCallbackHandler(BaseCallbackHandler):
         """Run when LLM ends running."""
 
     async def on_llm_error(
-        self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
+            self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
     ) -> None:
         """Run when LLM errors."""
 
     async def on_chain_start(
-        self, serialized: Dict[str, Any], inputs: Dict[str, Any], **kwargs: Any
+            self, serialized: Dict[str, Any], inputs: Dict[str, Any], **kwargs: Any
     ) -> None:
         """Run when chain starts running."""
 
@@ -301,12 +304,12 @@ class AsyncCallbackHandler(BaseCallbackHandler):
         """Run when chain ends running."""
 
     async def on_chain_error(
-        self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
+            self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
     ) -> None:
         """Run when chain errors."""
 
     async def on_tool_start(
-        self, serialized: Dict[str, Any], input_str: str, **kwargs: Any
+            self, serialized: Dict[str, Any], input_str: str, **kwargs: Any
     ) -> None:
         """Run when tool starts running."""
 
@@ -314,7 +317,7 @@ class AsyncCallbackHandler(BaseCallbackHandler):
         """Run when tool ends running."""
 
     async def on_tool_error(
-        self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
+            self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
     ) -> None:
         """Run when tool errors."""
 
@@ -329,12 +332,12 @@ class AsyncCallbackHandler(BaseCallbackHandler):
 
 
 async def _handle_event_for_handler(
-    handler: BaseCallbackHandler,
-    event_name: str,
-    ignore_condition_name: Optional[str],
-    verbose: bool,
-    *args: Any,
-    **kwargs: Any
+        handler: BaseCallbackHandler,
+        event_name: str,
+        ignore_condition_name: Optional[str],
+        verbose: bool,
+        *args: Any,
+        **kwargs: Any
 ) -> None:
     if ignore_condition_name is None or not getattr(handler, ignore_condition_name):
         if verbose or handler.always_verbose:
@@ -360,12 +363,12 @@ class AsyncCallbackManager(BaseCallbackManager):
         self.handlers: List[BaseCallbackHandler] = handlers
 
     async def _handle_event(
-        self,
-        event_name: str,
-        ignore_condition_name: Optional[str],
-        verbose: bool,
-        *args: Any,
-        **kwargs: Any
+            self,
+            event_name: str,
+            ignore_condition_name: Optional[str],
+            verbose: bool,
+            *args: Any,
+            **kwargs: Any
     ) -> None:
         """Generic event handler for AsyncCallbackManager."""
         await asyncio.gather(
@@ -378,11 +381,11 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_llm_start(
-        self,
-        serialized: Dict[str, Any],
-        prompts: List[str],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            serialized: Dict[str, Any],
+            prompts: List[str],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when LLM starts running."""
         await self._handle_event(
@@ -390,7 +393,7 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_llm_new_token(
-        self, token: str, verbose: bool = False, **kwargs: Any
+            self, token: str, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run on new LLM token. Only available when streaming is enabled."""
         await self._handle_event(
@@ -398,7 +401,7 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_llm_end(
-        self, response: LLMResult, verbose: bool = False, **kwargs: Any
+            self, response: LLMResult, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run when LLM ends running."""
         await self._handle_event(
@@ -406,20 +409,20 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_llm_error(
-        self,
-        error: Union[Exception, KeyboardInterrupt],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            error: Union[Exception, KeyboardInterrupt],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when LLM errors."""
         await self._handle_event("on_llm_error", "ignore_llm", verbose, error, **kwargs)
 
     async def on_chain_start(
-        self,
-        serialized: Dict[str, Any],
-        inputs: Dict[str, Any],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            serialized: Dict[str, Any],
+            inputs: Dict[str, Any],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when chain starts running."""
         await self._handle_event(
@@ -427,7 +430,7 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_chain_end(
-        self, outputs: Dict[str, Any], verbose: bool = False, **kwargs: Any
+            self, outputs: Dict[str, Any], verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run when chain ends running."""
         await self._handle_event(
@@ -435,10 +438,10 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_chain_error(
-        self,
-        error: Union[Exception, KeyboardInterrupt],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            error: Union[Exception, KeyboardInterrupt],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when chain errors."""
         await self._handle_event(
@@ -446,11 +449,11 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_tool_start(
-        self,
-        serialized: Dict[str, Any],
-        input_str: str,
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            serialized: Dict[str, Any],
+            input_str: str,
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when tool starts running."""
         await self._handle_event(
@@ -458,7 +461,7 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_tool_end(
-        self, output: str, verbose: bool = False, **kwargs: Any
+            self, output: str, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run when tool ends running."""
         await self._handle_event(
@@ -466,10 +469,10 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_tool_error(
-        self,
-        error: Union[Exception, KeyboardInterrupt],
-        verbose: bool = False,
-        **kwargs: Any
+            self,
+            error: Union[Exception, KeyboardInterrupt],
+            verbose: bool = False,
+            **kwargs: Any
     ) -> None:
         """Run when tool errors."""
         await self._handle_event(
@@ -481,7 +484,7 @@ class AsyncCallbackManager(BaseCallbackManager):
         await self._handle_event("on_text", None, verbose, text, **kwargs)
 
     async def on_agent_action(
-        self, action: AgentAction, verbose: bool = False, **kwargs: Any
+            self, action: AgentAction, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run on agent action."""
         await self._handle_event(
@@ -489,7 +492,7 @@ class AsyncCallbackManager(BaseCallbackManager):
         )
 
     async def on_agent_finish(
-        self, finish: AgentFinish, verbose: bool = False, **kwargs: Any
+            self, finish: AgentFinish, verbose: bool = False, **kwargs: Any
     ) -> None:
         """Run when agent finishes."""
         await self._handle_event(
