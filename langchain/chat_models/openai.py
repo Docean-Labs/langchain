@@ -313,16 +313,10 @@ class ChatOpenAI(BaseChatModel):
                         verbose=self.verbose,
                     )
 
-            # billing
-            prompt_tokens = sum(len(message.content) for message in messages)
-            print("prompt_tokens -> ", prompt_tokens)
-            completion_tokens = len(inner_completion)
-            print("completion_tokens -> ", completion_tokens)
-            total_tokens = completion_tokens + prompt_tokens
-            print("total_tokens ->", total_tokens)
-            date = int(time.time() * 1000)
-            print("data -> ", date)
-            await self.callback_manager.on_billing_action(prompt_tokens, completion_tokens, total_tokens, date)
+            # token billing
+            prompt_tokens = self.get_num_tokens_from_messages(messages)
+            completion_tokens = self.get_num_tokens(inner_completion)
+            await self.callback_manager.on_billing_action(prompt_tokens, completion_tokens)
 
             message = _convert_dict_to_message(
                 {"content": inner_completion, "role": role}

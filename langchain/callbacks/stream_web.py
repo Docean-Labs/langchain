@@ -70,8 +70,7 @@ class StreamingWebCallbackHandler(BaseCallbackHandler):
     async def on_agent_finish(self, finish: AgentFinish, **kwargs: Any) -> None:
         """Run on agent end."""
 
-    async def on_billing_action(self, prompt_tokens: int, completion_tokens: int, total_tokens: int, date: int) -> None:
+    async def on_billing_action(self, prompt_tokens: int, completion_tokens: int) -> None:
         """on billing action"""
         if self._billing:
-            await self._billing(prompt_tokens, completion_tokens, total_tokens, date)
-        print("have nothing billing action")
+            await self._billing(prompt_tokens, completion_tokens)

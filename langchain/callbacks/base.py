@@ -94,7 +94,7 @@ class BaseCallbackHandler(ABC):
     def on_agent_finish(self, finish: AgentFinish, **kwargs: Any) -> Any:
         """Run on agent end."""
 
-    async def on_billing_action(self, prompt_tokens: int, completion_tokens: int, total_tokens: int, date: int) -> None:
+    async def on_billing_action(self, prompt_tokens: int, completion_tokens: int) -> None:
         """on billing action """
 
 
@@ -151,6 +151,15 @@ class CallbackManager(BaseCallbackManager):
             if not handler.ignore_llm:
                 if verbose or handler.always_verbose:
                     handler.on_llm_new_token(token, **kwargs)
+
+    def on_billing_action(
+            self, prompt_tokens: int, completion_tokens: int, verbose: bool = False, **kwargs: Any
+    ) -> None:
+        """Run when LLM ends running."""
+        for handler in self.handlers:
+            if not handler.ignore_llm:
+                if verbose or handler.always_verbose:
+                    handler.on_billing_action(prompt_tokens, completion_tokens)
 
     def on_llm_end(
             self, response: LLMResult, verbose: bool = False, **kwargs: Any
@@ -398,6 +407,14 @@ class AsyncCallbackManager(BaseCallbackManager):
         """Run on new LLM token. Only available when streaming is enabled."""
         await self._handle_event(
             "on_llm_new_token", "ignore_llm", verbose, token, **kwargs
+        )
+
+    async def on_billing_action(
+            self, prompt_tokens: int, completion_tokens: int, verbose: bool = False, **kwargs: Any
+    ) -> None:
+        """Run on agent action."""
+        await self._handle_event(
+            "on_billing_action", "ignore_llm", verbose, prompt_tokens, completion_tokens, **kwargs
         )
 
     async def on_llm_end(
