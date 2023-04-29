@@ -5,7 +5,7 @@ from langchain.agents.agent import AgentOutputParser
 from langchain.agents.mrkl.prompt import FORMAT_INSTRUCTIONS
 from langchain.schema import AgentAction, AgentFinish, OutputParserException
 
-FINAL_ANSWER_ACTION_FIRST = "AI Response:"
+FINAL_ANSWER_ACTION_FIRST = "Plugin Response:"
 FINAL_ANSWER_ACTION = "Final Answer:"
 
 
