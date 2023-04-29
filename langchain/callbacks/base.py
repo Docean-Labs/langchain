@@ -94,7 +94,7 @@ class BaseCallbackHandler(ABC):
     def on_agent_finish(self, finish: AgentFinish, **kwargs: Any) -> Any:
         """Run on agent end."""
 
-    async def on_billing_action(self, prompt_tokens: int, completion_tokens: int) -> None:
+    def on_billing_action(self, prompt_tokens: int, completion_tokens: int, **kwargs: Any) -> None:
         """on billing action """
 
 
@@ -295,6 +295,9 @@ class AsyncCallbackHandler(BaseCallbackHandler):
 
     async def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
         """Run on new LLM token. Only available when streaming is enabled."""
+
+    async def on_billing_action(self, prompt_tokens: int, completion_tokens: int, **kwargs: Any) -> None:
+        """on billing action """
 
     async def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Run when LLM ends running."""

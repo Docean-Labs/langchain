@@ -316,8 +316,7 @@ class ChatOpenAI(BaseChatModel):
             # token billing
             prompt_tokens = self.get_num_tokens_from_messages(messages)
             completion_tokens = self.get_num_tokens(inner_completion)
-            await self.callback_manager.on_billing_action(prompt_tokens, completion_tokens)
-
+            self.callback_manager.on_billing_action(prompt_tokens, completion_tokens, verbose=self.verbose)
             message = _convert_dict_to_message(
                 {"content": inner_completion, "role": role}
             )
