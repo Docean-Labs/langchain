@@ -98,7 +98,7 @@ Action: select a tool which must be only one of the tools [{tool_names}].
 Action Input: the input to the tool fo the above Action.  \n
 Observation: the result of the Action within Action Input.  \n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)  \n
-Thought: I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
+Thought: (new line)  \n I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
 Final Answer: the final output from executing the plan.  \n
 
 
