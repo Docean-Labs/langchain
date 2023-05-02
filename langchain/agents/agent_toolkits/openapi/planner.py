@@ -2,11 +2,10 @@
 import json
 import re
 from typing import List, Optional
-from langchain.callbacks import AsyncCallbackManager
 from langchain.callbacks.stream_web import StreamingWebCallbackHandler
 
 from functools import partial
-from typing import Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import yaml
 from pydantic import Field
@@ -32,13 +31,14 @@ from langchain.agents.agent_toolkits.openapi.planner_prompt import (
 from langchain.agents.agent_toolkits.openapi.spec import ReducedOpenAPISpec
 from langchain.agents.mrkl.base import ZeroShotAgent
 from langchain.agents.tools import Tool
+from langchain.base_language import BaseLanguageModel
+from langchain.callbacks.base import BaseCallbackManager
 from langchain.chains.llm import LLMChain
 from langchain.llms.openai import OpenAI
 from langchain.memory import ReadOnlySharedMemory
 from langchain.prompts import PromptTemplate
 from langchain.prompts.base import BasePromptTemplate
 from langchain.requests import RequestsWrapper
-from langchain.schema import BaseLanguageModel, BaseMemory
 from langchain.tools.base import BaseTool
 from langchain.tools.requests.tool import BaseRequestsTool
 
@@ -337,11 +337,14 @@ def _create_api_controller_tool(
 
 
 def create_openapi_agent(
-        api_spec: ReducedOpenAPISpec,
-        requests_wrapper: RequestsWrapper,
-        llm: BaseLanguageModel,
-        shared_memory: Optional[ReadOnlySharedMemory] = None,
-        verbose: bool = True,
+    api_spec: ReducedOpenAPISpec,
+    requests_wrapper: RequestsWrapper,
+    llm: BaseLanguageModel,
+    shared_memory: Optional[ReadOnlySharedMemory] = None,
+    callback_manager: Optional[BaseCallbackManager] = None,
+    verbose: bool = True,
+    agent_executor_kwargs: Optional[Dict[str, Any]] = None,
+    **kwargs: Dict[str, Any],
 ) -> AgentExecutor:
     """Instantiate API planner and controller for a given spec.
 
@@ -368,8 +371,15 @@ def create_openapi_agent(
     agent = ZeroShotAgent(
         llm_chain=LLMChain(llm=llm, prompt=prompt, memory=shared_memory),
         allowed_tools=[tool.name for tool in tools],
+        **kwargs,
     )
-    return AgentExecutor.from_agent_and_tools(agent=agent, tools=tools, verbose=True)
+    return AgentExecutor.from_agent_and_tools(
+        agent=agent,
+        tools=tools,
+        callback_manager=callback_manager,
+        verbose=verbose,
+        **(agent_executor_kwargs or {}),
+    )
 
 
 def create_openapi_agent_by_list(
@@ -377,8 +387,7 @@ def create_openapi_agent_by_list(
         requests_wrapper: RequestsWrapper,
         llm: BaseLanguageModel,
         plugins: List[dict],
-        custom_tools: List[BaseTool],
-        memory: BaseMemory
+        custom_tools: List[BaseTool]
 ) -> AgentExecutor:
     tools = []
     for index, api_spec in enumerate(api_specs):
@@ -405,8 +414,6 @@ def create_openapi_agent_by_list(
         tools=tools,
         verbose=True,
         streaming=True,
-        memory=memory,
-        callback_manager=AsyncCallbackManager([StreamingWebCallbackHandler()])
     )
 
 
