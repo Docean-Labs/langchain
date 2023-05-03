@@ -29,17 +29,10 @@ class Chain(BaseModel, ABC):
     """Base interface that all chains should implement."""
 
     memory: Optional[BaseMemory] = None
-<<<<<<< HEAD
     textbuffer: Dict = {}
     textbuffer_index: int = 0
-
-    callback_manager: BaseCallbackManager = Field(
-        default_factory=get_callback_manager, exclude=True
-    )
-=======
     callbacks: Callbacks = None
     callback_manager: Optional[BaseCallbackManager] = None
->>>>>>> c582f2e9e3b7e7f048b0d9c17e1d7f70ad367b9b
     verbose: bool = Field(
         default_factory=_get_verbosity
     )  # Whether to print the response text
@@ -141,26 +134,16 @@ class Chain(BaseModel, ABC):
             inputs,
         )
         try:
-<<<<<<< HEAD
-            outputs = self._call(inputs)
-            self.store_textbuffer(inputs, outputs)
-
-=======
             outputs = (
                 self._call(inputs, run_manager=run_manager)
                 if new_arg_supported
                 else self._call(inputs)
             )
->>>>>>> c582f2e9e3b7e7f048b0d9c17e1d7f70ad367b9b
+            self.store_textbuffer(inputs, outputs)
         except (KeyboardInterrupt, Exception) as e:
             run_manager.on_chain_error(e)
             raise e
-<<<<<<< HEAD
-        self.callback_manager.on_chain_end(outputs, verbose=self.verbose)
-
-=======
         run_manager.on_chain_end(outputs)
->>>>>>> c582f2e9e3b7e7f048b0d9c17e1d7f70ad367b9b
         return self.prep_outputs(inputs, outputs, return_only_outputs)
 
     async def acall(
@@ -198,25 +181,8 @@ class Chain(BaseModel, ABC):
         except (KeyboardInterrupt, Exception) as e:
             await run_manager.on_chain_error(e)
             raise e
-<<<<<<< HEAD
-        if self.callback_manager.is_async:
-            await self.callback_manager.on_chain_end(outputs, verbose=self.verbose)
-        else:
-            self.callback_manager.on_chain_end(outputs, verbose=self.verbose)
-        return await self.aprep_outputs(inputs, outputs, return_only_outputs)
-
-    def store_textbuffer(self, input_values: Dict[str, str], output_values: Dict[str, str]) -> None:
-        buffer_index = self.textbuffer_index
-        data_dict = {
-            "inputs": input_values,
-            "outputs": output_values,
-        }
-        self.textbuffer[buffer_index] = data_dict
-        self.textbuffer_index += 1
-=======
         await run_manager.on_chain_end(outputs)
         return self.prep_outputs(inputs, outputs, return_only_outputs)
->>>>>>> c582f2e9e3b7e7f048b0d9c17e1d7f70ad367b9b
 
     def prep_outputs(
         self,
