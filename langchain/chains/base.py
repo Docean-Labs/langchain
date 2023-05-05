@@ -139,7 +139,6 @@ class Chain(BaseModel, ABC):
                 if new_arg_supported
                 else self._call(inputs)
             )
-            self.store_textbuffer(inputs, outputs)
         except (KeyboardInterrupt, Exception) as e:
             run_manager.on_chain_error(e)
             raise e
