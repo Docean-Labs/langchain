@@ -45,6 +45,7 @@ from langchain.document_loaders.ifixit import IFixitLoader
 from langchain.document_loaders.image import UnstructuredImageLoader
 from langchain.document_loaders.image_captions import ImageCaptionLoader
 from langchain.document_loaders.imsdb import IMSDbLoader
+from langchain.document_loaders.json_loader import JSONLoader
 from langchain.document_loaders.markdown import UnstructuredMarkdownLoader
 from langchain.document_loaders.mediawikidump import MWDumpLoader
 from langchain.document_loaders.modern_treasury import ModernTreasuryLoader
@@ -60,6 +61,7 @@ from langchain.document_loaders.pdf import (
     PDFMinerPDFasHTMLLoader,
     PyMuPDFLoader,
     PyPDFDirectoryLoader,
+    PyPDFium2Loader,
     PyPDFLoader,
     UnstructuredPDFLoader,
 )
@@ -144,6 +146,7 @@ __all__ = [
     "IFixitLoader",
     "IMSDbLoader",
     "ImageCaptionLoader",
+    "JSONLoader",
     "ModernTreasuryLoader",
     "MWDumpLoader",
     "NotebookLoader",
@@ -159,6 +162,7 @@ __all__ = [
     "PlaywrightURLLoader",
     "PyMuPDFLoader",
     "PyPDFLoader",
+    "PyPDFium2Loader",
     "PythonLoader",
     "ReadTheDocsLoader",
     "RoamLoader",
