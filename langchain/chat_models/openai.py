@@ -272,6 +272,10 @@ class ChatOpenAI(BaseChatModel):
                 inner_completion += token
                 if run_manager:
                     run_manager.on_llm_new_token(stream_resp)
+            # token billing
+            prompt_tokens = self.get_num_tokens_from_messages(messages)
+            completion_tokens = self.get_num_tokens(inner_completion)
+            run_manager.on_billing_action(prompt_tokens, completion_tokens, verbose=self.verbose)
             message = _convert_dict_to_message(
                 {"content": inner_completion, "role": role}
             )
@@ -322,7 +326,7 @@ class ChatOpenAI(BaseChatModel):
             # token billing
             prompt_tokens = self.get_num_tokens_from_messages(messages)
             completion_tokens = self.get_num_tokens(inner_completion)
-            self.callback_manager.on_billing_action(prompt_tokens, completion_tokens, verbose=self.verbose)
+            await run_manager.on_billing_action(prompt_tokens, completion_tokens, verbose=self.verbose)
             message = _convert_dict_to_message(
                 {"content": inner_completion, "role": role}
             )

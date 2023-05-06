@@ -213,6 +213,24 @@ class CallbackManagerForLLMRun(RunManager, LLMManagerMixin):
             **kwargs,
         )
 
+    def on_billing_action(
+        self,
+        prompt_tokens: int,
+        completion_tokens: int,
+        **kwargs: Any,
+    ) -> None:
+        """Run when LLM generates a new token."""
+        _handle_event(
+            self.handlers,
+            "on_billing_action",
+            "ignore_llm",
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            run_id=self.run_id,
+            parent_run_id=self.parent_run_id,
+            **kwargs,
+        )
+
     def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Run when LLM ends running."""
         _handle_event(

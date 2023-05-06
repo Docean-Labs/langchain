@@ -184,6 +184,9 @@ class BaseCallbackHandler(
         """Whether to ignore agent callbacks."""
         return False
 
+    def on_billing_action(self, prompt_tokens: int, completion_tokens: int, **kwargs: Any) -> None:
+        """on billing action """
+
 
 class AsyncCallbackHandler(BaseCallbackHandler):
     """Async callback handler that can be used to handle callbacks from langchain."""
