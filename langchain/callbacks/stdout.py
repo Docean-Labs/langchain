@@ -37,13 +37,13 @@ class StdOutCallbackHandler(BaseCallbackHandler):
         self, serialized: Dict[str, Any], inputs: Dict[str, Any], **kwargs: Any
     ) -> None:
         """Print out that we are entering a chain."""
-        # class_name = serialized["name"]
-        # print(f"\n\n\033[1m> Entering new {class_name} chain...\033[0m")
+        class_name = serialized["name"]
+        print(f"\n\n\033[1m> Entering new {class_name} chain...\033[0m")
         pass
 
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
         """Print out that we finished a chain."""
-        # print("\n\033[1m> Finished chain.\033[0m")
+        print("\n\033[1m> Finished chain.\033[0m")
         pass
 
     def on_chain_error(
@@ -65,7 +65,7 @@ class StdOutCallbackHandler(BaseCallbackHandler):
         self, action: AgentAction, color: Optional[str] = None, **kwargs: Any
     ) -> Any:
         """Run on agent action."""
-        # print_text(action.log, color=color if color else self.color)
+        print_text(action.log, color=color if color else self.color)
         pass
 
     def on_tool_end(
@@ -77,11 +77,11 @@ class StdOutCallbackHandler(BaseCallbackHandler):
         **kwargs: Any,
     ) -> None:
         """If not the final action, print out observation."""
-        # if observation_prefix:
-        #     print_text(f"\n{observation_prefix}")
-        # print_text(output, color=color if color else self.color)
-        # if llm_prefix:
-        #     print_text(f"\n{llm_prefix}")
+        if observation_prefix:
+            print_text(f"\n{observation_prefix}")
+        print_text(output, color=color if color else self.color)
+        if llm_prefix:
+            print_text(f"\n{llm_prefix}")
         pass
 
     def on_tool_error(
@@ -98,12 +98,12 @@ class StdOutCallbackHandler(BaseCallbackHandler):
         **kwargs: Any,
     ) -> None:
         """Run when agent ends."""
-        # print_text(text, color=color if color else self.color, end=end)
+        print_text(text, color=color if color else self.color, end=end)
         pass
 
     def on_agent_finish(
         self, finish: AgentFinish, color: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Run on agent end."""
-        # print_text(finish.log, color=color if self.color else color, end="\n")
+        print_text(finish.log, color=color if self.color else color, end="\n")
         pass
