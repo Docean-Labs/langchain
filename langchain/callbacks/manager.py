@@ -291,7 +291,7 @@ class AsyncCallbackManagerForLLMRun(AsyncRunManager, LLMManagerMixin):
         """Run when LLM starts running."""
         await _ahandle_event(
             self.handlers,
-            "on_llm_start",
+            "on_billing_action",
             "ignore_llm",
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
@@ -673,7 +673,7 @@ class AsyncCallbackManager(BaseCallbackManager):
 
         await _ahandle_event(
             self.handlers,
-            "on_llm_start",
+            "on_billing_action",
             "ignore_llm",
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
