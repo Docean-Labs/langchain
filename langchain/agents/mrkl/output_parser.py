@@ -33,3 +33,7 @@ class MRKLOutputParser(AgentOutputParser):
             return AgentAction(action, action_input.strip(" ").strip('"'), text)
         else:
             return AgentAction("AnyGPT", text, text)
+
+    @property
+    def _type(self) -> str:
+        return "mrkl"
