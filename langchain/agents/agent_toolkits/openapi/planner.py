@@ -382,19 +382,24 @@ def create_openapi_agent(
     )
 
 
-def create_openapi_agent_by_list(
-        api_specs: List[ReducedOpenAPISpec],
+def create_openapi_custom_agent(
+        api_spec: ReducedOpenAPISpec,
         requests_wrapper: RequestsWrapper,
         llm: BaseLanguageModel,
-        plugins: List[dict],
-        custom_tools: List[BaseTool]
+        plugin: dict,
+        custom_tool: BaseTool,
+        memory: Optional[ReadOnlySharedMemory] = None,
+        callback_manager: Optional[BaseCallbackManager] = None,
+        verbose: bool = True,
+        agent_executor_kwargs: Optional[Dict[str, Any]] = None,
+        **kwargs: Dict[str, Any],
 ) -> AgentExecutor:
     tools = []
-    for index, api_spec in enumerate(api_specs):
-        tools.append(_create_api_planner_tool(api_spec, llm, plugins[index]))
-        tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm, plugins[index]))
+    if api_spec is not None:
+        tools.append(_create_api_planner_tool(api_spec, llm, plugin))
+        tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm, plugin))
     tools.append(get_gpt_tool(llm))
-    tools.extend(custom_tools)
+    tools.append(custom_tool)
     prompt = PromptTemplate(
         template=API_ORCHESTRATOR_PROMPT,
         input_variables=["input", "agent_scratchpad"],
@@ -406,14 +411,16 @@ def create_openapi_agent_by_list(
         },
     )
     agent = ZeroShotAgent(
-        llm_chain=LLMChain(llm=llm, prompt=prompt),
+        llm_chain=LLMChain(llm=llm, prompt=prompt, memory=memory),
         allowed_tools=[tool.name for tool in tools],
+        **kwargs,
     )
     return AgentExecutor.from_agent_and_tools(
         agent=agent,
         tools=tools,
-        verbose=True,
-        streaming=True,
+        callback_manager=callback_manager,
+        verbose=verbose,
+        **(agent_executor_kwargs or {}),
     )
 
 
