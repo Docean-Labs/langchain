@@ -399,7 +399,8 @@ def create_openapi_custom_agent(
         tools.append(_create_api_planner_tool(api_spec, llm, plugin))
         tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm, plugin))
     tools.append(get_gpt_tool(llm))
-    tools.append(custom_tool)
+    if custom_tool is not None:
+        tools.append(custom_tool)
     prompt = PromptTemplate(
         template=API_ORCHESTRATOR_PROMPT,
         input_variables=["input", "agent_scratchpad"],
