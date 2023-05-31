@@ -106,7 +106,6 @@ Examples as follows:
 Here are the tools to plan and execute API requests: 
 Game Plugin api_planner: Can be used to generate the right API calls from Game API Plugin Endpoints to assist with a user query, like Game API Plugin api_planner(query) . Should always be called before trying to calling the Game API Plugin api_controller. There is the description of the Game API Plugin: searching Games and supply games introduction.
 Game Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
-Shopping Params Generator: Select the most suitable endpoint and generate the most suitable params for the user query
 
 
 User query: can you suggest me five popular games for me.  \n
@@ -121,13 +120,6 @@ Action Input: 1) GET /game/search | To get some introduction of games, contains 
 Observation:   \n  \n
 Final Answer: The five popular games are as follows:  \n
 
-User query: search some bags, please give me the params.  \n
-Action: Shopping Params Generator.
-Action Input: generate the params for bags.  \n
-Observation:   \n  \n
-Final Answer: there is the json which contains the params and func:  \n
-
-
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
 2. You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Final Answer, etc.) you take.
@@ -140,7 +132,7 @@ NOTICE:
 Begin!
 
 User query: {input}  \n
-Thought:  \n I found the relevant information, and I will do next step or return Final Answer directly.  \n
+Thought:  \n I found the relevant information, and I will do next step.  \n
 {agent_scratchpad}  \n
 """
 
