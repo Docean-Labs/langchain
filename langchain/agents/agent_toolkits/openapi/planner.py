@@ -425,7 +425,7 @@ def create_openapi_custom_agent(
 
 def get_gpt_tool(llm):
     prompt = PromptTemplate(
-        template="help user to answer question\n{query}",
+        template="if all other tools can not answer user's question, this tool can help user to answer question\n{query}",
         input_variables=["query"],
     )
     chain = LLMChain(llm=llm, prompt=prompt)

@@ -107,7 +107,6 @@ Here are the tools to plan and execute API requests:
 Game Plugin api_planner: Can be used to generate the right API calls from Game API Plugin Endpoints to assist with a user query, like Game API Plugin api_planner(query) . Should always be called before trying to calling the Game API Plugin api_controller. There is the description of the Game API Plugin: searching Games and supply games introduction.
 Game Plugin api_controller: Can be used to execute a plan of API calls, like Game API Plugin api_controller(plan)."
 
-
 User query: can you suggest me five popular games for me.  \n
 Thought: I should select a suitable api_planner tool for Action and plan API calls first.  \n
 Action:Game Plugin api_planner
@@ -123,16 +122,14 @@ Final Answer: The five popular games are as follows:  \n
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
 2. You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Final Answer, etc.) you take.
-3. If you judge that the background context of user's query contains the answer, then you should directly use AnyGPT to execute the query within the useful context. 
-4. If you use a Params Generator type of tool, there is no need to execute the returned results of that tool nor call the api_controller tool; directly return the final answer.
-5. If you use IOS Local tool, you must to be an translator which extract the parameters from users’ query, and convert the query to full url scheme that includes right parameters. Please use following json format: “scheme”: “URL_SCHEME”, do not say any other words except the json as the Fianl Answer.
-6. When you generate some links, you must ensure that these web links are functional and usable, rather than being hypothetical example links.
+3. When you generate some links, you must ensure that these web links are functional and usable, rather than being hypothetical example links.
+4. If there is a tool named AnyGPT, and no tool other than AnyGPT can answer the user's questions, then use AnyGPT.
 ---
 
 Begin!
 
 User query: {input}  \n
-Thought:  \n I found the relevant information, and I will do next step.  \n
+Thought:  \n I should generate a plan to help with this query and then copy that plan exactly to the controller.  \n
 {agent_scratchpad}  \n
 """
 
