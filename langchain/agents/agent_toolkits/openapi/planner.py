@@ -396,7 +396,7 @@ def create_openapi_custom_agent(
     if api_spec is not None:
         tools.append(_create_api_planner_tool(api_spec, llm, plugin))
         tools.append(_create_api_controller_tool(api_spec, requests_wrapper, llm, plugin))
-    tools.append(get_gpt_tool(llm))
+    # tools.append(get_gpt_tool(llm))
     if custom_tool is not None:
         tools.append(custom_tool)
     prompt = PromptTemplate(

@@ -64,13 +64,14 @@ Starting below, you should follow this format:
 
 Plan: the plan of API calls to execute  \n
 Thought: \n you should always think about what to do  \n
-Action: select the most suitable tool from [{tool_names}].
+Action: one of [{tool_names}].
 Action Input: the input to the action.  \n
 Observation: the output of the action.  \n
 ... (this Thought/Action/Action Input/Observation can repeat N times)  \n
 Thought: I am finished executing the plan (or, I cannot finish executing the plan without knowing some other information.)  \n
 Plugin Response:: the final output from executing the plan or missing information I'd need to re-plan correctly.  \n
 
+NOTICE: Your <Plugin Response> should return all the information from API,not only output id and name.
 Begin!
 
 Plan: {input}  \n  \n
@@ -98,7 +99,7 @@ Action: select a tool which must be only one of the tools [{tool_names}].
 Action Input: the input to the tool fo the above Action.  \n
 Observation: the result of the Action within Action Input.  \n
 ... (this Thought/Action/Action Input/Observation can repeat at most N times)  \n
-Thought: (new line)  \n I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
+Thought: \n I am finished executing a plan and have the information the user asked for or the data the used asked to create.  \n
 Final Answer: the final output from executing the plan.  \n
 
 
@@ -117,13 +118,14 @@ Thought: I'm ready to execute the API calls.  \n
 Action:Game Plugin api_controller
 Action Input: 1) GET /game/search | To get some introduction of games, contains CF.   \n
 Observation:   \n  \n
-Final Answer: The five popular games are as follows:  \n
-
+Final Answer: The five popular games are as follows: ... \n
+    
 NOTICE: 
 1. The examples above only as a template for providing a response, but the data presented is fictitious and not real. Must avoid using the content in the example when providing real answers.
 2. You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Final Answer, etc.) you take.
 3. When you generate some links, you must ensure that these web links are functional and usable, rather than being hypothetical example links.
-4. If there is a tool named AnyGPT, and no tool other than AnyGPT can answer the user's questions, then use AnyGPT.
+4. When you begin output <Final Answer:>, you should change it to <Final Answer: ```>(other content), these three point must be requried.
+5. If the information from Plugin Response can be as a list, then your Final Answer should be formatted to markdown table. 
 ---
 
 Begin!
