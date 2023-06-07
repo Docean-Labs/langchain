@@ -36,11 +36,10 @@ def num_tokens_from_messages(message, model="gpt-3.5-turbo-0301"):
 
 
 def _prep_output(response):
-    print("------------------_prep_output: ----------\n", response)
-    if 'text/html' not in response.headers.get('Content-Type', ""):
+    if num_tokens_from_messages(response.text) < 3000 and 200 <= response.status_code < 300:
         return response.text
-    elif response.status_code == 401:
-        return response.status_code
+    elif response.status_code >= 400:
+        return "Plugin API error or unauthorized."
     else:
         return "Not found any relevant information, please check your params and URL / Endpoint."
 
