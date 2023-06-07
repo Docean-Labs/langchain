@@ -45,7 +45,7 @@ def _prep_output(response):
 
 
 async def _aprep_output(response):
-    if 'text/html' not in response.headers.get('Content-Type', ""):
+    if num_tokens_from_messages(response.text) < 3000 and 200 <= response.status_code < 300:
         return await response.text()
     else:
         return "Not found any relevant information, please check your params and URL / Endpoint."
@@ -166,11 +166,11 @@ class TextRequestsWrapper(BaseModel):
 
     def get(self, url: str, **kwargs: Any) -> str:
         """GET the URL and return the text."""
-        return _prep_output(self.requests.get(url, **kwargs))
+        return self.requests.get(url, **kwargs).text
 
     def post(self, url: str, data: Dict[str, Any], **kwargs: Any) -> str:
         """POST to the URL and return the text."""
-        return _prep_output(self.requests.post(url, data, **kwargs))
+        return self.requests.post(url, data, **kwargs).text
 
     def patch(self, url: str, data: Dict[str, Any], **kwargs: Any) -> str:
         """PATCH the URL and return the text."""
