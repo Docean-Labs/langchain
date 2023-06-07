@@ -71,7 +71,7 @@ def reduce_openapi_spec(spec: dict, dereference: bool = True) -> ReducedOpenAPIS
     """
     # 1. Consider only get, post, patch, delete endpoints.
     endpoints = [
-        (f"{operation_name.upper()} {route}", docs.get("description"), docs)
+        (f"{operation_name.upper()} {route}", docs.get("description", docs.get("summary", "")), docs)
         for route, operation in spec["paths"].items()
         for operation_name, docs in operation.items()
         if operation_name in ["get", "post", "patch", "delete"]
