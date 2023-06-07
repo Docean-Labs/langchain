@@ -125,6 +125,7 @@ NOTICE:
 2. You need to add a new line which markdown can format before each action (Action/Action Input/Thought/Observation/Final Answer, etc.) you take.
 3. When you generate some links, you must ensure that these web links are functional and usable, rather than being hypothetical example links.
 4. If the information from Plugin Response can be as a list, then your Final Answer should be formatted to markdown table. 
+5. Try your best to relate the user's questions to the existing tool. Even if some of the questions don't quite fit the tool's description, try to turn them into similar questions, don't tell users you can't find the answer unless you absolutely have to
 ---
 
 Begin!
