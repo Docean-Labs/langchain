@@ -140,7 +140,7 @@ This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string. 
 The value of "params" should be a dict of the needed and available parameters from the OpenAPI spec related to the endpoint. 
 If parameters are not needed, or not available, leave it empty.
-The value of "output_instructions" should be instructions on what information to extract from the response, 
+The value of "output_instructions" should be instructions on what information user want to know, do not specify a key.
 for example the id(s) for a resource(s) that the GET request fetches.
 """
 
@@ -159,12 +159,12 @@ Input to the tool should be a json string with 3 keys: "url", "data", and "outpu
 This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string.
 The value of "data" should be a dictionary of key-value pairs you want to POST to the url.
-The value of "output_instructions" should be instructions on what information to extract from the response, for example the id(s) for a resource(s) that the POST request creates.
+The value of "output_instructions" should be instructions on what information user want to know, do not specify a key.
 Always use double quotes for strings in the json string."""
 
 PARSING_POST_PROMPT = PromptTemplate(
     template="""Here is an API response:\n\n{response}\n\n====
-Your task is to extract some information according to these instructions: {instructions}
+Your task is to extract some information(default get all information) according to these instructions: {instructions}
 When working with API objects, you should usually use ids over names. Do not return any ids or names that are not in the response.
 If the response indicates an error, you should instead output a summary of the error.
 
