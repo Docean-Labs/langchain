@@ -140,7 +140,7 @@ This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string. 
 The value of "params" should be a dict of the needed and available parameters from the OpenAPI spec related to the endpoint. 
 If parameters are not needed, or not available, leave it empty.
-The value of "output_instructions" should be instructions on what information user want to know, do not specify a key.
+The value of "output_instructions" should be the information user want to know, If the user does not specify what information they want, return to the main content and not too simply; Do not specify a key.
 for example the id(s) for a resource(s) that the GET request fetches.
 """
 
@@ -159,7 +159,7 @@ Input to the tool should be a json string with 3 keys: "url", "data", and "outpu
 This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string.
 The value of "data" should be a dictionary of key-value pairs you want to POST to the url.
-The value of "output_instructions" should be instructions on what information user want to know, do not specify a key.
+The value of "output_instructions" should be the information user want to know, If the user does not specify what information they want, return to the main content and not too simply; Do not specify a key.
 Always use double quotes for strings in the json string."""
 
 PARSING_POST_PROMPT = PromptTemplate(
@@ -177,7 +177,7 @@ Input to the tool should be a json string with 3 keys: "url", "data", and "outpu
 This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string.
 The value of "data" should be a dictionary of key-value pairs of the body params available in the OpenAPI spec you want to PATCH the content with at the url.
-The value of "output_instructions" should be instructions on what information to extract from the response, for example the id(s) for a resource(s) that the PATCH request creates.
+The value of "output_instructions" should be the information user want to know, If the user does not specify what information they want, return to the main content and not too simply; Do not specify a key.
 Always use double quotes for strings in the json string."""
 
 PARSING_PATCH_PROMPT = PromptTemplate(
@@ -194,7 +194,7 @@ REQUESTS_DELETE_TOOL_DESCRIPTION = """ONLY USE THIS TOOL WHEN THE USER HAS SPECI
 Input to the tool should be a json string with 2 keys: "url", and "output_instructions".
 This JSON data must be output in a single line without line breaks.
 The value of "url" should be a string.
-The value of "output_instructions" should be instructions on what information to extract from the response, for example the id(s) for a resource(s) that the DELETE request creates.
+The value of "output_instructions" should be the information user want to know, If the user does not specify what information they want, return to the main content and not too simply; Do not specify a key.
 Always use double quotes for strings in the json string.
 ONLY USE THIS TOOL IF THE USER HAS SPECIFICALLY REQUESTED TO DELETE SOMETHING."""
 
